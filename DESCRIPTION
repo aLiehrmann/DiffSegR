@@ -1,0 +1,46 @@
+Package: DiffSegR
+Type: Package
+Title: DiffSegR: An RNA-Seq Data Driven Method for Differential Expression Analysis using Changepoint Detection
+Version: 1.0
+Authors@R: 
+    c(person(given = "Arnaud",
+           family = "Liehrmann",
+           role = c("aut", "cre"),
+           email = "arnaud.liehrmann@universite-paris-saclay.fr"),
+    person(given = "Benoît",
+           family = "Castandet",
+           role = c("aut")),
+    person(given = "Guillem",
+           family = "Rigaill",
+           role = c("aut"))
+    )   
+Description: The DiffSegR R package takes the bam files from an RNA-Seq dataset with two biological conditions and returns transcriptome-wide expression differences between these two conditions without using pre-existing annotations (typically genes).
+URL: https://forgemia.inra.fr/guillem.rigaill/diffsegr
+BugReports: https://forgemia.inra.fr/guillem.rigaill/diffsegr/-/issues
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    ggplot2,
+    sanssouci,
+    IRanges,
+    parallel,
+    GenomicRanges,
+    matrixStats,
+    xml2,
+    DESeq2,
+    GenomeInfoDb,
+    Rsubread,
+    S4Vectors,
+    SummarizedExperiment,
+    fpopw,
+    methods,
+    rtracklayer
+Depends: 
+    R (>= 3.5)
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr

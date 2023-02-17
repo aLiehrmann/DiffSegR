@@ -1,0 +1,325 @@
+---
+title: "Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Data
+
+In this tutorial we use an RNA-Seq dataset (SRA046998) generated to study the 
+differences in Arabidopsis thaliana chloroplast RNA metabolism between a control
+(wt) and a null mutant of the chloroplast-targeted $3'\to5'$ exoribonuclease 
+polynucleotide phosphorylase (pnp1-1). In comparison to control plants, this 
+mutant overaccumulate RNA fragments that are mainly located outside of the 
+annotated genic areas and the RNA-Seq data have been extensively validated using
+molecular techniques (Castandet et al. 2013; Hotto et al. 2015). Both conditions
+contain two biological replicates. Only a diluted set of reads overlapping 
+positions 71950 to 78500 on chloroplast genome has been kept as a minimal 
+dataset example.
+
+# Overview
+
+After setting up the necessary working environnement and loading the software, 
+we are going through each step of a classical differential expression analysis along
+the genome with ``DiffSegR``:
+
+ 1. Computation of coverages and per-base $\log_2$-FC from bam files ; 
+ 2. Summarize the differential transcription landscape, i.e. (i) identify
+    segments along the genome in the per-base $\log_2$-FC and (ii) 
+    count reads overlapping them ;
+ 3. Use the counts as measures of the expression abundance of the segments for
+    differential expression analysis ;
+ 4. Annotate the differential expressed regions (DERs) ;
+ 5. Visualize the DERs.
+
+# Setup
+
+First, we create a working directory that will host all the files produced
+by ``DiffSegR`` during the analysis (coverages, results).
+
+```{r}
+working_directory <- "./DIFFSEGR_TEST"
+dir.create(working_directory, showWarnings = FALSE)
+```
+
+Then, we save sample information that we will use for this tutorial in a text file.
+In practice, one can create the working directory and write the text file by hand. 
+The sample information file needs to include the following columns: 
+
+ 1. sample    : identifier for the sample ;
+ 2. condition : identifier for the condition ;
+ 3. replicate : identifier for the replicate ;
+ 4. bam       : path to the bam file (.bam) ;
+ 5. coverage  : path to the coverage file (.rds).
+ 
+Note: Coverages are computed internally by ``DiffSegR`` from bam files and saved 
+in *rds* format at the location specified by the user (``coverage``).
+
+```{r}
+#- create sample information table --------------------------------------------#
+sample_info <- data.frame(
+  sample    = c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"),
+  condition = rep(c("pnp1_1", "wt"), each = 2),
+  replicate = rep(1:2,2),
+  bam       = sapply(
+    c("pnp1_1_1_ChrC_71950_78500.bam", 
+      "pnp1_1_2_ChrC_71950_78500.bam",
+      "wt_1_ChrC_71950_78500.bam",
+      "wt_2_ChrC_71950_78500.bam"
+    ),
+    function(bam) system.file("extdata", bam, package = "DiffSegR")
+  ),
+  coverage  = file.path(
+    working_directory,
+    paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
+  )
+)
+#- save sample information table ----------------------------------------------# 
+write.table(
+  sample_info, 
+  file.path(working_directory, "sample_info.txt")
+)
+#- display sample information table -------------------------------------------#
+knitr::kable(sample_info, row.names = FALSE)
+```
+
+# Analysis 
+
+Now, we present a basic use of the main functions of the ``DiffSegR`` R package. 
+The analysis was carried on ``4`` logical cores. This parameter can be modified by 
+the user according to the resources at his disposal.
+
+
+```{r}
+library(DiffSegR)
+nb_threads = 4
+```
+
+## Step 1: Computation of coverages and per-base $\log_2$-FC from bam files
+
+``loadData()``: 
+
+ 1. builds coverages from bam files within a locus specified by the user. Here 
+ we focus on positions ``71950`` to ``78500`` of chloroplast genome (``ChrC``).
+ If the reads are stranded (``stranded = TRUE``), the function builds one coverage 
+ profile per-strand for each replicate of both compared biological conditions. 
+ By default the heuristic used to compute coverages is the geometric 
+ mean of 5’ and 3’ profiles of the aligned reads (``coverageType = "average"``) ; 
+ 2. transforms coverages into the per-base $\log_2$-FC (one by strand). The 
+ reference biological condition specified by the user is set to the denominator
+ (``referenceCondition = "wt"``) ; 
+ 3. returns the coverages and the per-base $\log_2$-FC as a list of run-length 
+ encoding objects.
+ 
+Note: If coverages have already been computed, set ``fromBam = FALSE`` to load
+them directly from specified *rds* files.
+ 
+```{r}
+data <- loadData(
+  sampleInfo   = file.path(working_directory,"sample_info.txt"),
+  locus        = list(
+    seqid      = "ChrC", 
+    chromStart = 71950, 
+    chromEnd   = 78500
+  ),
+  referenceCondition = "wt",
+  stranded           = TRUE,
+  fromBam            = TRUE,
+  nbThreads          = nb_threads
+)
+
+print(data)
+```
+
+## Setp 2: Summarizing the differential transcription landscape
+
+`segmentation()`:
+
+ 1. calls ``fpopw::Fpop_w()``, a changepoint detection in the mean of a Gaussian signal approach, 
+    on the per-base $\log_2$-FC of both strands to retrieve the 
+    segments boundaries (changepoints). The hyperparameter $\alpha$ specified by 
+    the user controls the number of returned segments. The number of changepoints 
+    is a decreasing function of $\alpha$. By default ``alpha=2``. 
+    The segments are stored as a GenomicRanges object.
+ 2. calls ``Rsubread::featureCounts()`` which assigns to the segments the mapped 
+    reads from each replicate of each biological condition. A read is allowed 
+    to be assigned to more than one feature if it is found to overlap with more than 
+    one feature. ``Rsubread::featureCounts()`` ends by building a count matrix.
+ 3. returns the segments and associated count matrix as a ``SummarizedExperiment`` 
+    object.
+
+```{r}
+SExp <- segmentation(
+  data                   = data, 
+  nbThreadsFeatureCounts = nb_threads,
+  outputDirectory        = working_directory
+)
+```
+
+Between positions ``71950`` and ``78500`` of chloroplast genome, ``segmentation()`` 
+returns 17 segments on the forward (+) strand and 52 segments on the reverse (-) 
+strand. Segment coordinates and associated counts can be retrieved using 
+respectively ``SummarizedExperiment::rowRanges`` and 
+`SummarizedExperiment::assay` accessors. 
+
+```{r}
+#- number of segments found ---------------------------------------------------# 
+SummarizedExperiment::strand(SExp)
+#- display first five segments ------------------------------------------------#
+segment_coordinates <- as.data.frame(SummarizedExperiment::rowRanges(SExp))
+knitr::kable(segment_coordinates[1:5, colnames(segment_coordinates)%in%c(
+  "seqnames",
+  "start",
+  "end",
+  "width",
+  "strand")
+]) 
+#- display counts associated to first five segments ---------------------------#
+counts <- SummarizedExperiment::assay(SExp)
+knitr::kable(counts[1:5,])
+```
+
+## Step 3: Differential expression analysis (DEA)
+
+``dea()`` function takes as input the recently built ``SummarizedExperiment`` object 
+and calls ``DESeq2`` to test for each line, i.e. each segment, the difference in 
+expression between the two compared biological conditions. Here we control all 
+the resulting p-values using a Benjamini–Hochberg procedure at level 
+``significanceLevel = 1e-2``. 
+
+Note: By default sample-specific size factors are computed by ``DESeq2``. They
+can be overwritten by the user. In this example, sample-specific size factors
+have the same weight ``sizeFactors = rep(1,4)``.
+
+```{r}
+dds <- dea(
+  data              = data,
+  SExp              = SExp,
+  design            = ~ condition,
+  sizeFactors       = rep(1,4),
+  significanceLevel = 1e-2
+)
+```
+
+Regions differentially expressed (DERs) are set to 
+``rejectedHypotheses = TRUE``. On this example, ``dea()`` returns 39 DERs.
+
+```{r}
+#- number of DERs -------------------------------------------------------------#
+DERs <- dds[SummarizedExperiment::mcols(dds)$rejectedHypotheses,]
+length(DERs)
+#- display first five DERs by position ----------------------------------------#
+DERs <- as.data.frame(SummarizedExperiment::rowRanges(DERs))
+knitr::kable(DERs[1:5, colnames(DERs)%in%c(
+  "seqnames",
+  "start",
+  "end",
+  "width",
+  "strand",
+  "log2FoldChange",
+  "padj")
+])
+```
+
+## Step 4: Annotate the DERs 
+
+``annotateNearest()`` relies on user specified annotations in *gff3* or *gtf* 
+format to annotate the DERs found during the DEA. Seven classes
+of labels translate the relative positions of the DER and its
+closest annotation(s): antisense; upstream; downstream; inside;
+overlapping 3’; overlapping 5’; overlapping 5’, 3’.
+
+```{r}
+exons_path <- system.file(
+ "extdata", 
+ "TAIR10_ChrC_exon.gff3", 
+ package = "DiffSegR"
+)
+annotated_DERs <- annotateNearest(
+   data        = data,
+   dds         = dds,
+   annotations = exons_path,
+   select      = c("seqnames", "start", "end", "width", "strand", 
+     "description", "distance", "Parent", "log2FoldChange", "pvalue"),
+   orderBy     = "pvalue"
+)
+knitr::kable(annotated_DERs, row.names = FALSE, digits = 3)
+```
+
+## Step 5: Visualizing the DERs
+
+``export()`` saves for both strands DERs, not-DERs, segmentation, coverages 
+and log2-FC per-base in formats readable (*bedGraph*,
+*gff3*) by genome viewers like the Integrative Genome Viewer
+(IGV) (Robison et al. 2011). For IGV, ``export()`` also creates an IGV 
+sessiong in *xml* format that allows loading all tracks in one click.
+
+The tracks from top to bottom stand for:
+
+  1. (log2-Cov plus) the mean of coverages on the log scale for
+     the forward strand in both biological conditions of
+     interest. Here, the blue line and the red line stand for
+     wt and pnp1-1 conditions, respectively ;
+  2. (log2-FC plus) the per-base $\log_2$-FC between pnp1-1
+     (numerator) and wt (denominator) for the forward
+     strand. The straight horizontal line is the zero indicator.
+     When the per-base $\log_2$-FC is above or under the
+     zero indicator line, it suggests an up-regulation and 
+     an down-regulation in pnp1-1 compare to wt, respectively. Over the per-base 
+     $\log_2$-FC is displayed the changepoints positions (vertical blue lines)
+     and the mean of each segment (horizontal blue lines that connect 
+     two changepoints) ;
+  3. (DiffSegR plus) the results of the DEA on the forward strand. 
+     Up-regulated regions appear in green. Down-regulated regions appear 
+     in purple. Not-DERs appear in grey ;
+  4. (annotations) The features provided by the user for interpetations.
+
+Symmetrically, the rest of the tracks correspond to the same data on the 
+reverse strand.
+
+```{r}
+ChrC_path  <- system.file(
+ "extdata", 
+ "TAIR10_ChrC.fa", 
+ package = "DiffSegR"
+)
+export(
+ data            = data,
+ dds             = dds, 
+ outputDirectory = working_directory,
+ genome          = ChrC_path,
+ annotation      = exons_path,
+ select          = c("log2FoldChange", "pvalue", "padj")
+) 
+```
+
+
+```{r echo=FALSE, out.width='100%', fig.cap="DiffSegR output between positions 76,990 to 78,248 on the chloroplast genome. The session is loaded in IGV 2.12.3 for Linux."}
+knitr::include_graphics('igv_snapshot.png')
+```
+# References 
+
+Castandet B, Hotto AM, Fei Z, Stern DB. Strand-specific RNA sequencing uncovers 
+chloroplast ribonuclease functions. FEBS Lett 587(18), 3096-101 (2013). 
+[doi:10.1016/j.febslet.2013.08.004](https://febs.onlinelibrary.wiley.com/doi/10.1016/j.febslet.2013.08.004).
+
+Hotto AM, Castandet B, Gilet L, Higdon A, Condon C, Stern DB. Arabidopsis 
+chloroplast mini-ribonuclease III participates in rRNA maturation and intron 
+recycling. Plant Cell 27(3), 724-40 (2015). [doi:10.1105/tpc.114.134452](https://academic.oup.com/plcell/article/27/3/724/6118143).
+
+James T. Robinson, Helga Thorvaldsdóttir, Wendy Winckler, Mitchell Guttman, 
+Eric S. Lander, Gad Getz, Jill P. Mesirov. Integrative Genomics Viewer. 
+Nature Biotechnology 29, 24–26 (2011). [doi:10.1038/nbt.1754](https://www.nature.com/articles/nbt.1754).
+
+

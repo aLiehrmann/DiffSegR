@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="PATH_TO_GENOME" hasGeneTrack="false" hasSequenceTrack="true" locus="LOCUS" nextAutoscaleGroup="2" path="PATH_TO_IGV_SESSION" version="IGV_VERSION">
+  <Resources>
+    <Resource path="log2_cdt2_plus.bedGraph"/>
+    <Resource path="DiffSegR_results_minus.gff3"/>
+    <Resource path="model_minus.bedGraph"/>
+    <Resource path="log2_FC_minus.bedGraph"/>
+    <Resource path="log2_cdt1_minus.bedGraph"/>
+    <Resource path="log2_cdt1_plus.bedGraph"/>
+    <Resource path="log2_cdt2_minus.bedGraph"/>
+    <Resource path="log2_FC_plus.bedGraph"/>
+    <Resource path="DiffSegR_results_plus.gff3"/>
+    <Resource path="PATH_TO_ANNOTATIONS"/>
+    <Resource path="model_plus.bedGraph"/>
+  </Resources>
+  <Panel height="1100" name="DataPanel" width="1800">
+    <Track autoScale="false" clazz="org.broad.igv.track.MergedTracks" fontSize="15" id="0d37815c-ff1e-4895-9bba-082f369f72c0" name="log2-cov (+)" visible="true" height="150">
+      <Track id="log2_cdt1_plus.bedGraph"/>
+      <Track id="log2_cdt2_plus.bedGraph"/>
+    </Track>
+    <Track autoScale="false" clazz="org.broad.igv.track.MergedTracks" fontSize="15" id="b6ef9b38-a5a4-4fec-940b-f1fde3670afd" name="log2-fc (+)" visible="true" height="150">
+      <Track id="log2_FC_plus.bedGraph" />
+      <Track id="model_plus.bedGraph" />
+   </Track>
+    <Track clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" fontSize="15" height="50" id="DiffSegR_results_plus.gff3" name="DiffSegR (+)" visible="true"/>
+    <Track clazz="org.broad.igv.track.FeatureTrack" color="0,0,178" displayMode="EXPANDED" fontSize="15" height="50" id="PATH_TO_ANNOTATIONS" name="annotations" visible="true"/>
+    <Track clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" fontSize="15" height="50" id="DiffSegR_results_minus.gff3" name="DiffSegR (-)" visible="true"/>
+    <Track autoScale="false" clazz="org.broad.igv.track.MergedTracks" fontSize="15" id="16942551-bd08-4d16-ae35-afa31a9e6e89" name="log2-fc (-)" visible="true" height="150">
+      <Track id="log2_FC_minus.bedGraph" />
+      <Track id="model_minus.bedGraph" />
+    </Track>
+    <Track autoScale="false" clazz="org.broad.igv.track.MergedTracks" fontSize="15" id="b2de95cd-8dc9-4c7e-bfff-581ed92bc9b4" name="log2-cov (-)" visible="true" height="150">
+      <Track id="log2_cdt2_minus.bedGraph" />
+      <Track id="log2_cdt1_minus.bedGraph" />
+    </Track>
+  </Panel> 
+  <PanelLayout dividerFractions="1"/>
+  <HiddenAttributes>
+    <Attribute name="DATA FILE"/>
+    <Attribute name="DATA TYPE"/>
+    <Attribute name="NAME"/>
+  </HiddenAttributes>
+</Session>

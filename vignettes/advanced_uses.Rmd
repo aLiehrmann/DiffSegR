@@ -1,0 +1,171 @@
+---
+title: "Advanced uses of DiffSegR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Advanced uses of DiffSegR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r,  include = FALSE}
+working_directory <- "./DIFFSEGR_TEST"
+dir.create(working_directory, showWarnings = FALSE)
+sample_info <- data.frame(
+  sample    = c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"),
+  condition = rep(c("pnp1_1", "wt"), each = 2),
+  replicate = rep(1:2,2),
+  bam       = sapply(
+    c("pnp1_1_1_ChrC_71950_78500.bam", 
+      "pnp1_1_2_ChrC_71950_78500.bam",
+      "wt_1_ChrC_71950_78500.bam",
+      "wt_2_ChrC_71950_78500.bam"
+    ),
+    function(bam) system.file("extdata", bam, package = "DiffSegR")
+  ),
+  coverage  = file.path(
+    working_directory,
+    paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
+  )
+)
+#- save sample information table ----------------------------------------------# 
+write.table(
+  sample_info, 
+  file.path(working_directory, "sample_info.txt")
+)
+library(DiffSegR)
+nb_threads = 4
+data <- loadData(
+  sampleInfo   = file.path(working_directory,"sample_info.txt"),
+  locus        = list(
+    seqid      = "ChrC", 
+    chromStart = 71950, 
+    chromEnd   = 78500
+  ),
+  referenceCondition = "wt",
+  stranded           = TRUE,
+  fromBam            = TRUE,
+  nbThreads          = nb_threads
+)
+```
+
+Before using this tutorial, we recommend that you read through our [introductory tutorial](articles/introductory_tutorial.html).
+
+
+# Overview
+
+In this tutorial we explore more advanced uses of `DiffSegR`:
+
+ 1. How to explore a range of segmentation models ?
+ 2. How to select a subset of segments whose absolute $\log_2$-FC passes a threshold while keeping statistical guarantees on the true discovery proportion in this subset ? (Post hoc inference) 
+
+# Exploring more segmentations  
+
+After visual inspection, one can disagree with the segmentation of the $\log_2$-FC
+proposed by **DiffSegR**. It can happen when spurious changepoints, resulting 
+from an over-segmentation of the $\log_2$-FC, seems to be added. In this 
+case it is often useful to explore several different segmentations in 
+order to choose a more suitable hyperparameter $\alpha$ value.
+
+To explore all reachable segmentations between 1 to `Kmax` segments, one can pass
+`segmentNeighborhood = TRUE` and specify the value of `Kmax` to `segmentation()`.
+This step can be time consuming. A grid search approach is also implemented in
+**DiffSegR** (see `gridSearch` and `alphas` parameters of `segmentation()`).
+
+```{r}
+SExp <- segmentation(
+  data                   = data, 
+  nbThreadsFeatureCounts = nb_threads,
+  outputDirectory        = working_directory,
+  segmentNeighborhood    = TRUE,
+  Kmax = 50,
+  alpha = 4
+)
+```
+
+The figures showing the path of all reachable segmentations up to `Kmax` segments of
+the log2-FC on reverse and forward strands are accessible in the working 
+directory under the name *all_models_minus.rds* and *all_models_plus.rds*. 
+
+A good practice is to select a robust segmentation. Visually it is equivalent 
+to pick the elbow of this curve. In this example we can select 
+$\log(\alpha)=2.1$ or $\alpha=4.28$ symbolized by the red line. Setting `alpha=4`
+in `segmentation()` leads to 11 segments on the reverse strand.
+
+```{r echo=FALSE, dpi=300, out.width='100%', fig.align='center', fig.cap="Path of all reachable segmentations up to 50 segments of the log2-FC on reverse strand. Corresponding alpha values on the log scale can be read on X-axis."}
+all_models <- readRDS("DIFFSEGR_TEST/all_models_minus.rds")
+ggplot2::ggplot(
+  all_models,
+  ggplot2::aes(
+    x = log2(alphas), 
+    y = K
+  )
+)+
+ggplot2::geom_line() +
+ggplot2::geom_point(size=1) +
+ggplot2::geom_vline(
+  xintercept = log2(4.3), 
+  color      = "red"
+)+
+ggplot2::geom_hline(
+  yintercept = 11, 
+  color      = "blue"
+)+
+ggplot2::xlab("log2(alpha)")+
+ggplot2::ylab("number of segments (K)")+
+ggplot2::theme(
+  text = ggplot2::element_text(size = 20)
+) +
+ggplot2::theme_bw()
+```
+
+# Post hoc inference
+
+If the result of the DEA does not correspond to what the user expected,
+they may tend to snoop in the data and eventually select a subset 
+of segments of interest. For instance it is a common usage to define a *threshold* 
+on the absolute $\log_2$-FC per-segment. In this case DiffSegR will declare 
+differentially expressed the largest set of segments with an absolute 
+$\log_2$-FC > *threshold* and a true discovery proportion lower bound choose by 
+the user (``postHoc_tdpLowerBound``). This post-hoc 
+lower bound is obtained by controlling the joint error rate (JER) using the 
+Simes family of thresholds (Blanchard et al. 2020).
+
+
+To use post hoc inference one have to specify :
+
+  1. its decision rule, i.e a predicate function that returns a single `TRUE` 
+  or ``FALSE`` if the segment on which it is applied meets the conditions defined in 
+  the predicate. The criteria used in the predicate have to be defined for each
+  segment in ``SummarizedExperiment::mcols(dds)``. Here, ``predicate = function(x) 2^abs(x$log2FoldChange)>2`` ;
+  2. the minimum true discovery proportion among the subset of segments declared 
+  differentially expressed. Here, ``postHoc_tdpLowerBound = 0.05`` ;
+  3. the significance level of the test procedure. Here, 
+  ``postHoc_significanceLevel = 0.05``.
+
+```{r}
+dds <- dea(
+  data                      = data,
+  SExp                      = SExp,
+  design                    = ~ condition,
+  sizeFactors               = rep(1,4),
+  predicate                 = function(x) 2^abs(x$log2FoldChange)>2,
+  postHoc_significanceLevel = 0.05,
+  postHoc_tdpLowerBound     = 0.95
+)
+
+#- check fold-change of differentially expressed segments ---------------------#
+DERs <- dds[SummarizedExperiment::mcols(dds)$rejectedHypotheses,]
+2^abs(SummarizedExperiment::mcols(DERs)$log2FoldChange)
+```
+
+# References 
+
+Blanchard, G., Neuvial, P. and Roquain, E. Post hoc confidence bounds on false 
+positives using reference families. Ann. Statist 48(3), 1281-1303 (2020). [doi.org/10.1214/19-AOS1847](https://hal.science/hal-01483585v5/document).

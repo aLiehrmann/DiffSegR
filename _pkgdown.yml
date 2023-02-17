@@ -1,0 +1,21 @@
+template:
+  bootswatch: cosmo
+  bootstrap: 5
+navbar:
+  bg: dark
+  structure:
+    left: [tutorial, advanced, reference, news] 
+    right: [github]
+  components:
+    tutorial:
+      text: Introductory tutorial
+      href: articles/introductory_tutorial.html
+    advanced:
+      text: Advanced tutorials
+      href: articles/advanced_uses.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: News
+      href: news/index.html
