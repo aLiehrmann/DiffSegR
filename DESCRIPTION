@@ -15,8 +15,8 @@ Authors@R:
            role = c("aut"))
     )   
 Description: The DiffSegR R package takes the bam files from an RNA-Seq dataset with two biological conditions and returns transcriptome-wide expression differences between these two conditions without using pre-existing annotations (typically genes).
-URL: https://forgemia.inra.fr/guillem.rigaill/diffsegr
-BugReports: https://forgemia.inra.fr/guillem.rigaill/diffsegr/-/issues
+URL: https://github.com/aLiehrmann/DiffSegR
+BugReports: https://github.com/aLiehrmann/DiffSegR/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
