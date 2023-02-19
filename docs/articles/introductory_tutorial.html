@@ -7,12 +7,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="DiffSegR">
 <title>Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR • DiffSegR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR">
 <meta property="og:description" content="DiffSegR">
+<meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -71,7 +78,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/aLiehrmann/DiffSegR/blob/HEAD/vignettes/introductory_tutorial.Rmd" class="external-link"><code>vignettes/introductory_tutorial.Rmd</code></a></small>
@@ -159,28 +166,28 @@
 <td align="left">pnp1_1_1</td>
 <td align="left">pnp1_1</td>
 <td align="right">1</td>
-<td align="left">/tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</td>
+<td align="left">/tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</td>
 <td align="left">./DIFFSEGR_TEST/pnp1_1_1.rds</td>
 </tr>
 <tr class="even">
 <td align="left">pnp1_1_2</td>
 <td align="left">pnp1_1</td>
 <td align="right">2</td>
-<td align="left">/tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</td>
+<td align="left">/tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</td>
 <td align="left">./DIFFSEGR_TEST/pnp1_1_2.rds</td>
 </tr>
 <tr class="odd">
 <td align="left">wt_1</td>
 <td align="left">wt</td>
 <td align="right">1</td>
-<td align="left">/tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</td>
+<td align="left">/tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</td>
 <td align="left">./DIFFSEGR_TEST/wt_1.rds</td>
 </tr>
 <tr class="even">
 <td align="left">wt_2</td>
 <td align="left">wt</td>
 <td align="right">2</td>
-<td align="left">/tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</td>
+<td align="left">/tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</td>
 <td align="left">./DIFFSEGR_TEST/wt_2.rds</td>
 </tr>
 </tbody>
@@ -250,7 +257,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //================================= Running ==================================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid1303007 ...       ||</span></span>
+<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid1360629 ...       ||</span></span>
 <span><span class="co">#&gt; ||    Features : 13102                                                        ||</span></span>
 <span><span class="co">#&gt; ||    Meta-features : 13102                                                   ||</span></span>
 <span><span class="co">#&gt; ||    Chromosomes/contigs : 1                                                 ||</span></span>
@@ -321,7 +328,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //================================= Running ==================================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid1303007 ...       ||</span></span>
+<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid1360629 ...       ||</span></span>
 <span><span class="co">#&gt; ||    Features : 13102                                                        ||</span></span>
 <span><span class="co">#&gt; ||    Meta-features : 13102                                                   ||</span></span>
 <span><span class="co">#&gt; ||    Chromosomes/contigs : 1                                                 ||</span></span>
@@ -359,7 +366,7 @@
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
 <span><span class="co">#&gt; \\============================================================================//</span></span>
 <span><span class="co">#&gt; building log2-FC per-base ...</span></span>
-<span><span class="co">#&gt; finished in 1.74989604949951 secs</span></span>
+<span><span class="co">#&gt; finished in 1.35417079925537 secs</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $coverages</span></span>
@@ -438,10 +445,10 @@
 <span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam         wt_1        wt         1</span></span>
 <span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam         wt_2        wt         2</span></span>
 <span><span class="co">#&gt;                                                                                                                     bam</span></span>
-<span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam /tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</span></span>
-<span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam /tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</span></span>
-<span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam         /tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</span></span>
-<span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam         /tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam /tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam /tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam         /tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam         /tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</span></span>
 <span><span class="co">#&gt;                                                   coverage</span></span>
 <span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam ./DIFFSEGR_TEST/pnp1_1_1.rds</span></span>
 <span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam ./DIFFSEGR_TEST/pnp1_1_2.rds</span></span>
@@ -472,7 +479,7 @@
 <span><span class="co">#&gt; changepoint detection on ChrC 71950 78500 minus ...</span></span>
 <span><span class="co">#&gt;   &gt; model selection ...</span></span>
 <span><span class="co">#&gt;   &gt; report available in ./DIFFSEGR_TEST/all_models_minus.pdf</span></span>
-<span><span class="co">#&gt; finished in 0.830332517623901 secs</span></span>
+<span><span class="co">#&gt; finished in 0.605228185653687 secs</span></span>
 <span><span class="co">#&gt; counting ...</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         ==========     _____ _    _ ____  _____  ______          _____  </span></span>
@@ -506,7 +513,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //================================= Running ==================================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid1303007 ...       ||</span></span>
+<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid1360629 ...       ||</span></span>
 <span><span class="co">#&gt; ||    Features : 69                                                           ||</span></span>
 <span><span class="co">#&gt; ||    Meta-features : 69                                                      ||</span></span>
 <span><span class="co">#&gt; ||    Chromosomes/contigs : 1                                                 ||</span></span>
@@ -543,7 +550,7 @@
 <span><span class="co">#&gt; || Write the read assignment summary.                                         ||</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
 <span><span class="co">#&gt; \\============================================================================//</span></span>
-<span><span class="co">#&gt; finished in 0.16825008392334 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; finished in 0.171851396560669 secs</span></span></code></pre></div>
 <p>Between positions <code>71950</code> and <code>78500</code> of chloroplast genome, <code><a href="../reference/segmentation.html">segmentation()</a></code> returns 17 segments on the forward (+) strand and 52 segments on the reverse (-) strand. Segment coordinates and associated counts can be retrieved using respectively <code><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowRanges.html" class="external-link">SummarizedExperiment::rowRanges</a></code> and <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment::assay</a></code> accessors.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#- number of segments found ---------------------------------------------------# </span></span>
@@ -772,7 +779,7 @@
 <span>     <span class="st">"description"</span>, <span class="st">"distance"</span>, <span class="st">"Parent"</span>, <span class="st">"log2FoldChange"</span>, <span class="st">"pvalue"</span><span class="op">)</span>,</span>
 <span>   orderBy     <span class="op">=</span> <span class="st">"pvalue"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt;  &gt; loading annotations from /tmp/RtmpuKwk4K/temp_libpath13c9814541c875/DiffSegR/extdata/TAIR10_ChrC_exon.gff3 ...</span></span>
+<span><span class="co">#&gt;  &gt; loading annotations from /tmp/RtmphcvDQk/temp_libpath14b710619d9ca0/DiffSegR/extdata/TAIR10_ChrC_exon.gff3 ...</span></span>
 <span><span class="co">#&gt;  &gt; annotate differential expressed regions ...</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">annotated_DERs</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">

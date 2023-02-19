@@ -1,10 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# DiffSegR
-
 <!-- badges: start -->
 <!-- badges: end -->
+
+# DiffSegR <img src="man/figures/logo.png" style="float:right; height:250px;" />
 
 ## What is DiffSegR ?
 
@@ -47,11 +46,10 @@ remotes::install_github("aLiehrmann/DiffSegR")
 
 ## Where can I learn more?
 
-See the [introductory
-tutorial](docs/articles/introductory_tutorial.html) for an introduction
-to our framework on real data. See the [advanced
-tutorial](docs/articles/introductory_tutorial.html) for examples of more
-advanced uses of `DiffSegR`.
+See the [introductory tutorial](articles/introductory_tutorial.html) for
+an introduction to our framework on real data. See the [advanced
+tutorial](articles/advanced_uses.html) for examples of more advanced
+uses of `DiffSegR`.
 
 ## References
 

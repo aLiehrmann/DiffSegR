@@ -55,7 +55,7 @@ data <- loadData(
 )
 ```
 
-Before using this tutorial, we recommend that you read through our [introductory tutorial](articles/introductory_tutorial.html).
+Before using this tutorial, we recommend that you read through our [introductory tutorial](introductory_tutorial.html).
 
 
 # Overview

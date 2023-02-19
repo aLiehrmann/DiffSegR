@@ -13,10 +13,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-# DiffSegR
-
 <!-- badges: start -->
 <!-- badges: end -->
+
+# DiffSegR <img src="man/figures/logo.png" style="float:right; height:250px;" />
 
 ## What is DiffSegR ?
 
