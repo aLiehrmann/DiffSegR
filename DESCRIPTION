@@ -9,7 +9,7 @@ Authors@R:
            email = "arnaud.liehrmann@universite-paris-saclay.fr"),
     person(given = "Étienne",
            family = "Delannoy",
-           role = c("aut"),
+           role = c("aut")),
     person(given = "Benoît",
            family = "Castandet",
            role = c("aut")),
