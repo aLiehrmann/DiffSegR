@@ -56,9 +56,9 @@ remotes::install_github("aLiehrmann/DiffSegR")
 
 ## Where can I learn more?
 
-See the [introductory tutorial](articles/introductory_tutorial.html) for an 
+See the [introductory tutorial](https://aliehrmann.github.io/DiffSegR/articles/introductory_tutorial.html) for an 
 introduction to our framework on real data. See the 
-[advanced tutorial](articles/advanced_uses.html) for examples of 
+[advanced tutorial](https://aliehrmann.github.io/DiffSegR/articles/advanced_uses.html) for examples of 
 more advanced uses of `DiffSegR`.
 
 ## References 
