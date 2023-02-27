@@ -150,7 +150,14 @@ annotateNearest <- function(
   all_annotated_DERs <- labeling(
     all_annotated_DERs = all_annotated_DERs
   )
-  all_annotated_DERs <- data.frame(lapply(all_annotated_DERs ,unlist))
+  nb_rows <- length(all_annotated_DERs$start)
+  all_annotated_DERs <- data.frame(lapply(all_annotated_DERs , function(x) {
+    if (class(x)=="list") {
+      sapply(x, function(x2) ifelse(length(x2)>0, paste(x2, sep=","), '')) 
+    } else {
+      unlist(x)
+    }
+  }))
   ##- keep only selected columns ---------------------------------------------##
   if (is.null(select)) {
     all_annotated_DERs[order(all_annotated_DERs[[orderBy]]),]
