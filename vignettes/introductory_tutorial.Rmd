@@ -258,10 +258,10 @@ knitr::kable(annotated_DERs, row.names = FALSE, digits = 3)
 
 ## Step 5: Visualizing the DERs
 
-``export()`` saves for both strands DERs, not-DERs, segmentation, coverages 
+``exportResults()`` saves for both strands DERs, not-DERs, segmentation, coverages 
 and log2-FC per-base in formats readable (*bedGraph*,
 *gff3*) by genome viewers like the Integrative Genome Viewer
-(IGV) (Robison et al. 2011). For IGV, ``export()`` also creates an IGV 
+(IGV) (Robison et al. 2011). For IGV, ``exportResults()`` also creates an IGV 
 sessiong in *xml* format that allows loading all tracks in one click.
 
 The tracks from top to bottom stand for:
@@ -293,7 +293,7 @@ ChrC_path  <- system.file(
  "TAIR10_ChrC.fa", 
  package = "DiffSegR"
 )
-export(
+exportResults(
  data            = data,
  dds             = dds, 
  outputDirectory = working_directory,

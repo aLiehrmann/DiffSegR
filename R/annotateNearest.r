@@ -159,6 +159,7 @@ annotateNearest <- function(
     }
   }))
   ##- keep only selected columns ---------------------------------------------##
+  select <- select[select%in%names(all_annotated_DERs)]
   if (is.null(select)) {
     all_annotated_DERs[order(all_annotated_DERs[[orderBy]]),]
   } else {

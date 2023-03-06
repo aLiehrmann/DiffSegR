@@ -1,7 +1,7 @@
 #' Export DiffSegR results
 #'
 #' @description 
-#' `export()` saves for both strands DERs, not-DERs, segmentation, 
+#' `exportResults()` saves for both strands DERs, not-DERs, segmentation, 
 #' coverage profiles and log2-FC per-base in formats readable (bedGraph,gff3) 
 #' by genome viewers like the Integrative Genome Viewer (IGV). For IGV, export 
 #' also creates an IGV sessiong in xml format that allows loading all tracks in
@@ -88,7 +88,7 @@
 #'   "TAIR10_ChrC.fa", 
 #'   package = "DiffSegR"
 #')
-#' export(
+#' exportResults(
 #'   data            = data,
 #'   dds             = dds, 
 #'   outputDirectory = working_directory,
@@ -101,7 +101,7 @@
 #' unlink(working_directory, recursive = TRUE)
 #' 
 #' @export
-export <- function(
+exportResults <- function(
   data, 
   dds,
   outputDirectory, 
