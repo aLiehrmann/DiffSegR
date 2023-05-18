@@ -23,7 +23,7 @@
       <Track id="model_plus.bedGraph" />
    </Track>
     <Track clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" fontSize="15" height="50" id="DiffSegR_results_plus.gff3" name="DiffSegR (+)" visible="true"/>
-    <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="15" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="true" visible="true"/>
+    <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="15" id="PATH_TO_GENOME" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="true" visible="true"/>
     <Track clazz="org.broad.igv.track.FeatureTrack" color="0,0,178" displayMode="EXPANDED" fontSize="15" height="50" id="PATH_TO_ANNOTATIONS" name="annotations" visible="true"/>
     <Track clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" fontSize="15" height="50" id="DiffSegR_results_minus.gff3" name="DiffSegR (-)" visible="true"/>
     <Track autoScale="false" clazz="org.broad.igv.track.MergedTracks" fontSize="15" id="16942551-bd08-4d16-ae35-afa31a9e6e89" name="log2-fc (-)" visible="true" height="150">

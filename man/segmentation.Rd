@@ -72,7 +72,7 @@ search procedure.}
 \item{gridSearch}{A \code{Boolean}. Indicate if a grid search has to be used
 to explore the space of segmentations.}
 
-\item{outputDirectory}{A \code{String}. Path to the output directory.}
+\item{outputDirectory}{A \code{String}. Absolute path to the output directory.}
 
 \item{nbThreadsFeatureCounts}{An \code{Integer}. Passed on to
 \code{\link[Rsubread:featureCounts]{Rsubread::featureCounts()}}.}

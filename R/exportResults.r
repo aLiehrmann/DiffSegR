@@ -9,9 +9,10 @@
 #' 
 #' @param data The `List` object returned by [DiffSegR::loadData()]
 #' @param dds The `DESeqDataSet` object returned by [DiffSegR::dea()]. 
-#' @param outputDirectory A `String`. Path to the output directory.
-#' @param genome A `String`. Path to the genome on which reads have been aligned.
-#' @param annotations A `String`. Path to the annotation file.
+#' @param outputDirectory A `String`. Absolute path to the output directory.
+#' @param genome A `String`. Absolute path to the genome on which reads have 
+#' been aligned.
+#' @param annotations A `String`. Absolute path to the annotation file.
 #' @param igvVersion A `String`. What IGV version should be used in the xml 
 #' file. 
 #' @param select A vector of `String`. Additional information that appear for 
@@ -389,6 +390,13 @@ exportResults <- function(
       color      = as.integer(c(0,21,150)),
       altColor   = as.integer(c(0,21,150))
     )
+    locus_tmp <- data$locus
+    BiocGenerics::strand(locus_tmp) <- d[[strand]]
+    complemental <- GenomicRanges::setdiff(locus_tmp, model)
+    if(length(complemental)>0){
+      complemental$score<-0
+      model <- sort(c(model, complemental))
+    }
     rtracklayer::export.bedGraph(
       model, 
       file.path(
@@ -483,15 +491,20 @@ exportResults <- function(
    )
   
   xml2::xml_set_attr(
-    xml2::xml_children(xml2::xml_children(igv_session_bp))[c(14,16)], 
+    xml2::xml_children(xml2::xml_children(igv_session_bp))[c(14,17)], 
     att="id",
     value = file.path(
       outputDirectory,
-      xml2::xml_attr(xml2::xml_children(xml2::xml_children(igv_session_bp))[c(14,16)], att="id") 
+      xml2::xml_attr(xml2::xml_children(xml2::xml_children(igv_session_bp))[c(14,17)], att="id") 
     )
   )
   xml2::xml_set_attr(
     xml2::xml_children(xml2::xml_children(igv_session_bp))[15], 
+    att="id",
+    value = genome
+  )
+  xml2::xml_set_attr(
+    xml2::xml_children(xml2::xml_children(igv_session_bp))[16], 
     att="id",
     value = annotations
   )

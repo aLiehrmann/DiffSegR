@@ -35,7 +35,7 @@
 #' @param compressed A `Boolean`. Indicate if the observations have to be
 #' compressed (does not change the segmentation results and decreases
 #' the running time).
-#' @param outputDirectory A `String`. Path to the output directory.
+#' @param outputDirectory A `String`. Absolute path to the output directory.
 #' @param alpha A `Double`. Segmentation hyperparameter used in Yao's penalty: 
 #' \code{alpha*sigma^2*log(n)}. The number of changepoints returned by 
 #' [fpopw::Fpop_w()] is a decreasing function of `alpha`.

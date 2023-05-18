@@ -19,11 +19,12 @@ exportResults(
 
 \item{dds}{The \code{DESeqDataSet} object returned by \code{\link[=dea]{dea()}}.}
 
-\item{outputDirectory}{A \code{String}. Path to the output directory.}
+\item{outputDirectory}{A \code{String}. Absolute path to the output directory.}
 
-\item{genome}{A \code{String}. Path to the genome on which reads have been aligned.}
+\item{genome}{A \code{String}. Absolute path to the genome on which reads have
+been aligned.}
 
-\item{annotations}{A \code{String}. Path to the annotation file.}
+\item{annotations}{A \code{String}. Absolute path to the annotation file.}
 
 \item{igvVersion}{A \code{String}. What IGV version should be used in the xml
 file.}
