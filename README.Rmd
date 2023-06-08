@@ -65,7 +65,7 @@ more advanced uses of `DiffSegR`.
 
 Liehrmann, A., Delannoy, E., Castandet, B. and Rigaill, G. DiffSegR: an
 RNA-Seq data driven method for differential expression analysis using 
-changepoint detection (2023). [add link to preprint]().
+changepoint detection (2023). [doi:10.1101/2023.06.05.543691](https://doi.org/10.1101/2023.06.05.543691).
 
 Maidstone R, Hocking T, Rigaill G, Fearnhead P. On optimal multiple 
 changepoint algorithms for large data. Stat Comput 27(2), 519-533 (2017).
