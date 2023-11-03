@@ -60,9 +60,7 @@ featureCountsFactory.fromCoverage <- function(
     `*` = "all"
   )
   features_df <- as.data.frame(features)
-  cl <- parallel::makeCluster(nbThreads)
-  all_covs <- do.call(rbind,parallel::parLapply(
-    cl,
+  all_covs <- do.call(rbind,lapply(
     1:nrow(features_df), 
     function(i_feature){
       start   <- features_df$modelStart[[i_feature]]
@@ -77,8 +75,7 @@ featureCountsFactory.fromCoverage <- function(
           as.integer(sum(coverages[[strand]][[sample]][start:end]))
         }
       )
-    }#, mc.cores = nbThreads
+    }
   ))
-  parallel::stopCluster(cl)
   all_covs
 }
