@@ -9,6 +9,7 @@ annotateNearest(
   data,
   dds,
   annotations,
+  outputDirectory = NULL,
   annotationsType = NULL,
   orderBy = "start",
   select = NULL
@@ -21,6 +22,8 @@ annotateNearest(
 
 \item{annotations}{A \code{String}. Path to the annotation file (in gff or gtf
 format).}
+
+\item{outputDirectory}{A \code{String}. Absolute path to the output directory.}
 
 \item{annotationsType}{A vector of \code{String}. Keep only matching annotations.}
 

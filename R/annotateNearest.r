@@ -17,6 +17,7 @@
 #' @param dds The `DESeqDataSet` object returned by [DiffSegR::dea()].
 #' @param annotations A `String`. Path to the annotation file (in gff or gtf 
 #' format).
+#' @param outputDirectory A `String`. Absolute path to the output directory.
 #' @param annotationsType A vector of `String`. Keep only matching annotations.
 #' @param orderBy A `String`. The name of the column on which returned 
 #' annotations are sorted.
@@ -108,6 +109,7 @@ annotateNearest <- function(
   data,
   dds, 
   annotations,
+  outputDirectory = NULL,
   annotationsType = NULL,
   orderBy = "start",
   select  = NULL) {
@@ -161,10 +163,18 @@ annotateNearest <- function(
   ##- keep only selected columns ---------------------------------------------##
   select <- select[select%in%names(all_annotated_DERs)]
   if (is.null(select)) {
-    all_annotated_DERs[order(all_annotated_DERs[[orderBy]]),]
+    all_annotated_DERs <- all_annotated_DERs[order(all_annotated_DERs[[orderBy]]),]
   } else {
-    all_annotated_DERs[order(all_annotated_DERs[[orderBy]]),select]
+    all_annotated_DERs <- all_annotated_DERs[order(all_annotated_DERs[[orderBy]]),select]
   }
+  if (!is.null(outputDirectory)) {
+    write.table(
+      x         = all_annotated_DERs, 
+      file      = file.path(outputDirectory, "annotated_DERs.txt"),
+      row.names = FALSE
+    )
+  }
+  all_annotated_DERs
 }
 
 findNearestAnnotation <- function(
@@ -203,7 +213,6 @@ findNearestAnnotation <- function(
         annotated_DERs$distance == 0,
     ]
   }
-  
   annotated_DERs
 }
 

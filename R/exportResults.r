@@ -443,7 +443,7 @@ exportResults <- function(
     )
   )
   xml2::xml_set_attr(igv_session_bp, attr="path", value=file.path(
-    outputDirectory,
+    ".",
     "DiffSegR_results_igv_session.xml"
   ))
   xml2::xml_set_attr(igv_session_bp, attr="version", value=igvVersion)
@@ -451,7 +451,7 @@ exportResults <- function(
     xml2::xml_children(xml2::xml_children(igv_session_bp)[1]), 
     attr = "path",
     value = file.path(
-      outputDirectory,
+      ".",
       c(
         paste0("log2_",other,"_plus.bedGraph"),
         "DiffSegR_results_minus.gff3",
@@ -476,7 +476,7 @@ exportResults <- function(
     xml2::xml_children(xml2::xml_children(xml2::xml_children(igv_session_bp))), 
     attr="id",
     value = file.path(
-      outputDirectory,
+      ".",
       c(
          paste0("log2_",reference,"_plus.bedGraph"),
          paste0("log2_",other,"_plus.bedGraph"),
@@ -494,7 +494,7 @@ exportResults <- function(
     xml2::xml_children(xml2::xml_children(igv_session_bp))[c(14,17)], 
     att="id",
     value = file.path(
-      outputDirectory,
+      ".",
       xml2::xml_attr(xml2::xml_children(xml2::xml_children(igv_session_bp))[c(14,17)], att="id") 
     )
   )
