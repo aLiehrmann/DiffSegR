@@ -17,7 +17,7 @@ segmentationLFC(
 )
 }
 \arguments{
-\item{data}{The \code{List} object returned by \code{\link[=newEperiment]{newEperiment()}}.}
+\item{data}{The \code{List} object returned by \code{\link[=newExperiment]{newExperiment()}}.}
 
 \item{modelSelectionType}{A \code{String}. Select the penalty used by FPOP:
 \itemize{

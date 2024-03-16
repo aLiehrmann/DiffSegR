@@ -44,7 +44,8 @@ Imports:
     BiocGenerics,
     stats,
     Rsamtools,
-    grDevices
+    grDevices,
+    GenomicAlignments
 Depends: 
     R (>= 3.5)
 Suggests: 

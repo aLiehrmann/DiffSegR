@@ -105,5 +105,5 @@ featureCountsFactory.fromCoverage <- function(
         }
       )
     })) 
-  }, nbThreads = data$nbThreads %/% data$nbThreadsByLocus))
+  }, nbThreads = nbThreads %/% nbThreadsByLocus))
 }

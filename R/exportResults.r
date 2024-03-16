@@ -21,6 +21,8 @@
 #' @param select A vector of `String`. Additional information that appear for 
 #' each region in IGV. only columns from features matching these names are
 #' kept.
+#' @param verbose A `Logical`. Should all the operations performed be 
+#' displayed ?
 #'
 #' @export
 exportResults <- function(

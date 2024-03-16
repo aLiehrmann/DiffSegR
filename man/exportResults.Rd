@@ -38,6 +38,9 @@ file.}
 \item{select}{A vector of \code{String}. Additional information that appear for
 each region in IGV. only columns from features matching these names are
 kept.}
+
+\item{verbose}{A \code{Logical}. Should all the operations performed be
+displayed ?}
 }
 \description{
 For each locus, \code{exportResults()} saves DERs, not-DERs, segmentation,

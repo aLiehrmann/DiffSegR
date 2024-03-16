@@ -257,7 +257,7 @@ KvsAlpha <- function(
 
   current_output_dir <- file.path(outputDirectory, locus$locusID)
     if(!file.exists(current_output_dir)) {
-      dir.create(file.path(outputDirectory, current_locus$locusID))
+      dir.create(current_output_dir)
     }
 
   grDevices::pdf(

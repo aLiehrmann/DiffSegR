@@ -105,7 +105,7 @@ annotateNearest <- function(
 
   ## cast list elements in a string
   all_annotated_DERs <- data.frame(lapply(all_annotated_DERs , function(x) {
-    if (class(x)=="list") {
+    if (methods::is(x,"list")) {
       sapply(x, function(elements) {
         ifelse(length(elements)>0, paste(elements, sep=","), '') 
       })
@@ -131,7 +131,7 @@ annotateNearest <- function(
         file.path(outputDirectory, "annotated_DERs.txt")
       )
     }
-    write.table(
+    utils::write.table(
       x         = all_annotated_DERs, 
       file      = file.path(outputDirectory, "annotated_DERs.txt"),
       row.names = FALSE

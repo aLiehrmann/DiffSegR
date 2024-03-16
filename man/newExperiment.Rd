@@ -23,7 +23,7 @@ sample information. The file includes the following columns:
 \item bam            : path to the bam file ;
 \item coverage       : path to the coverage file (in rds format);
 \item isPairedEnd    : logical indicating if the library contain
-paired-end reads or not (TRUE/FALSE);
+paired-end reads or not (TRUE/FALSE) ;
 \item strandSpecific : integer indicating if a strand-specific analysis
 should be performed. ‘0’ (unstranded), ‘1’ (stranded) and ‘2’ (reversely
 stranded). WARNING: All samples must be consistently stranded or non-stranded.
@@ -56,6 +56,6 @@ analyzed in parallel is equal to the divisor of nbThreads by nbThreadsByLocus.}
 A \code{List}. The list containing loaded data.
 }
 \description{
-loadData allows for loading various pieces of information related to RNA-Seq
+\code{newExperiment()} allows for loading various pieces of information related to RNA-Seq
 samples and the loci that will be analyzed.
 }

@@ -14,7 +14,7 @@
 #  the user controls the number of returned segments. Corresponding genomic 
 #' regions are returned as `GRanges` object.
 #' 
-#' @param data The `List` object returned by [DiffSegR::newEperiment()].
+#' @param data The `List` object returned by [DiffSegR::newExperiment()].
 #' @param modelSelectionType A `String`. Select the penalty used by FPOP:
 #' \itemize{
 #'   \item yao : Yao's penalty \code{alpha*sigma^2*log(n)}.
