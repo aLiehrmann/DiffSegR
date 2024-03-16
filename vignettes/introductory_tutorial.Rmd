@@ -33,7 +33,7 @@ After setting up the necessary working environnement and loading the software,
 we are going through each step of a classical differential expression analysis along
 the genome with ``DiffSegR``:
 
- 1. Computation of coverages and per-base $\log_2$-FC from bam files ; 
+ 1. Definition of the experiment and calculation of coverages from bam files ; 
  2. Summarize the differential transcription landscape, i.e. (i) identify
     segments along the genome in the per-base $\log_2$-FC and (ii) 
     count reads overlapping them ;
@@ -52,18 +52,24 @@ working_directory <- "./DIFFSEGR_TEST"
 dir.create(working_directory, showWarnings = FALSE)
 ```
 
-Then, we save sample information that we will use for this tutorial in a text file.
+Then, we save sample information that we will use for this tutorial in a `data.frame`.
 In practice, one can create the working directory and write the text file by hand. 
 The sample information file needs to include the following columns: 
 
- 1. sample    : identifier for the sample ;
- 2. condition : identifier for the condition ;
- 3. replicate : identifier for the replicate ;
- 4. bam       : path to the bam file (.bam) ;
- 5. coverage  : path to the coverage file (.rds).
+ 1. sample      : identifier for the sample ;
+ 2. condition   : identifier for the condition ;
+ 3. replicate   : identifier for the replicate ;
+ 4. bam         : path to the bam file (.bam) ;
+ 5. coverage    : path to the coverage file (.rds) ;
+ 6. isPairedEnd : logical indicating if the library contain paired-end reads or 
+ not (TRUE/FALSE) ;
+ 7. strandSpecific : integer indicating if a strand-specific analysis
+  should be performed. 0 (unstranded), 1 (stranded) and 2 (reversely
+  stranded). WARNING: All samples must be consistently stranded or non-stranded.
+  Ensure uniformity across your dataset to avoid analysis errors.
  
 Note: Coverages are computed internally by ``DiffSegR`` from bam files and saved 
-in *rds* format at the location specified by the user (``coverage``).
+in rds format at the location specified by the user (coverage column).
 
 ```{r}
 #- create sample information table --------------------------------------------#
@@ -82,91 +88,119 @@ sample_info <- data.frame(
   coverage  = file.path(
     working_directory,
     paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
-  )
+  ),
+  isPairedEnd    = rep(FALSE, 4),
+  strandSpecific = rep(1, 4)
 )
-#- save sample information table ----------------------------------------------# 
-write.table(
-  sample_info, 
-  file.path(working_directory, "sample_info.txt")
-)
+
 #- display sample information table -------------------------------------------#
 knitr::kable(sample_info, row.names = FALSE)
 ```
 
 # Analysis 
 
-Now, we present a basic use of the main functions of the ``DiffSegR`` R package. 
-The analysis was carried on ``4`` logical cores. This parameter can be modified by 
-the user according to the resources at his disposal.
-
+Now, we present a basic use of the main functions of the ``DiffSegR`` R package.
+Our focus is on analyzing the sequence stretch from positions ``71950`` to ``78500`` 
+in the chloroplast genome (``ChrC``). This locus corresponds to the polycistronic gene
+cluster from *psbB* to *petD*. To optimize processing, we'll allocate 4 
+logical cores for examining this locus. Users have the flexibility to adjust 
+this setting based on their available computational resources. Additionally, 
+it's possible to concurrently analyze multiple genomic regions of interest 
+(see our [multi-loci analysis tutorial](multi_loci.html)). By doing so, users can efficiently manage
+the total number of threads for the analysis, as well as how many threads are 
+assigned to each locus. Thus, the ratio of the total number of threads to the 
+number assigned per locus determines the number of locus analyzed simultaneously.
 
 ```{r}
 library(DiffSegR)
-nb_threads = 4
+nb_threads_tot = 4
+nb_threads_locus = 4
 ```
 
-## Step 1: Computation of coverages and per-base $\log_2$-FC from bam files
+## Step 1: Definition of the experiment and calculation of coverages from bam files
 
-``loadData()``: 
+`newExperiment()` imports relevant data about the RNA-Seq samples and a specified 
+locus (e.g., ``ChrC: 71950 - 78500``).
 
- 1. builds coverages from bam files within a locus specified by the user. Here 
- we focus on positions ``71950`` to ``78500`` of chloroplast genome (``ChrC``).
- If the reads are stranded (``stranded = TRUE``), the function builds one coverage 
- profile per-strand for each replicate of both compared biological conditions. 
- By default the heuristic used to compute coverages is the geometric 
- mean of 5’ and 3’ profiles of the aligned reads (``coverageType = "average"``) ; 
- 2. transforms coverages into the per-base $\log_2$-FC (one by strand). The 
- reference biological condition specified by the user is set to the denominator
- (``referenceCondition = "wt"``) ; 
- 3. returns the coverages and the per-base $\log_2$-FC as a list of run-length 
- encoding objects.
- 
-Note: If coverages have already been computed, set ``fromBam = FALSE`` to load
-them directly from specified *rds* files.
- 
 ```{r}
-data <- loadData(
-  sampleInfo   = file.path(working_directory,"sample_info.txt"),
-  locus        = list(
+data <- newExperiment(
+  sampleInfo   = sample_info,
+  loci         = data.frame(
     seqid      = "ChrC", 
     chromStart = 71950, 
-    chromEnd   = 78500
+    chromEnd   = 78500,
+    locusID    = "psbB_petD"
   ),
   referenceCondition = "wt",
-  stranded           = TRUE,
-  fromBam            = TRUE,
-  nbThreads          = nb_threads
+  otherCondition     = "pnp1_1",
+  nbThreads          = nb_threads_tot,
+  nbThreadsByLocus   = nb_threads_locus
 )
 
 print(data)
 ```
-
-## Setp 2: Summarizing the differential transcription landscape
-
-`segmentation()`:
-
- 1. calls ``fpopw::Fpop_w()``, a changepoint detection in the mean of a Gaussian signal approach, 
-    on the per-base $\log_2$-FC of both strands to retrieve the 
-    segments boundaries (changepoints). The hyperparameter $\alpha$ specified by 
-    the user controls the number of returned segments. The number of changepoints 
-    is a decreasing function of $\alpha$. By default ``alpha=2``. 
-    The segments are stored as a GenomicRanges object.
- 2. calls ``Rsubread::featureCounts()`` which assigns to the segments the mapped 
-    reads from each replicate of each biological condition. A read is allowed 
-    to be assigned to more than one feature if it is found to overlap with more than 
-    one feature. ``Rsubread::featureCounts()`` ends by building a count matrix.
- 3. returns the segments and associated count matrix as a ``SummarizedExperiment`` 
-    object.
+`coverage()` generates coverage profiles from BAM files for the locus
+of interest. When reads are stranded (``stranded = TRUE``), it creates a separate 
+coverage profile for each strand across replicates of the biological conditions 
+being compared. By default, coverage is calculated using a geometric mean of the
+5’ and 3’ ends of aligned reads (``coverageType = "average"``). If the coverage 
+is too sparse, one may calculate the coverage based on the entire read by using
+ the argument ``coverageType = "fullLength"``.
 
 ```{r}
-SExp <- segmentation(
-  data                   = data, 
-  nbThreadsFeatureCounts = nb_threads,
-  outputDirectory        = working_directory
+coverage(
+  data         = data,
+  coverageType = "average"
 )
 ```
 
-Between positions ``71950`` and ``78500`` of chloroplast genome, ``segmentation()`` 
+To enhance efficiency, users have the option to pre-process by subsetting BAM
+files to the locus of interest, which can notably reduce running times (refer
+to ``subsettingBams`` and ``tmpDirectory`` parameters in `?DiffSegR::coverage`).
+
+```{r, eval=FALSE}
+coverage(
+  data           = data,
+  coverageType   = "average",
+  subsettingBams = TRUE,
+  tmpDirectory   = path_to_tmp_directory 
+)
+```
+
+## Setp 2: Summarizing the differential transcription landscape
+
+`segmentationLFC()` transforms coverage profiles into the per-base $\log_2$-FC 
+(one by strand). The reference biological condition specified by the user is set 
+to the denominator (``referenceCondition = "wt"``). `segmentationLFC()` then 
+calls ``fpopw::Fpop_w()``, a changepoint detection in the mean of a Gaussian 
+signal approach, on the per-base $\log_2$-FC of both strands to retrieve the 
+segments boundaries (changepoints). The hyperparameter $\alpha$ specified by 
+the user controls the number of returned segments. The number of changepoints 
+is a decreasing function of $\alpha$. By default ``alpha=2``. The segments are 
+stored as a ``GRanges`` object.
+
+```{r}
+features <- segmentationLFC(
+  data  = data, 
+  alpha = 2
+)
+```
+
+`counting()` calls ``Rsubread::featureCounts()`` which assigns to the segments 
+the mapped reads from each replicate of each biological condition. A read is allowed 
+to be assigned to more than one feature if it is found to overlap with more than 
+one feature. Upon completion, ``Rsubread::featureCounts()`` generates a count matrix. 
+Finally, `counting()` returns the segments and associated count matrix as a 
+``SummarizedExperiment`` object.
+
+```{r}
+SExp <- counting(
+  data     = data, 
+  features = features
+)
+```
+
+Between positions ``71950`` and ``78500`` of chloroplast genome, ``segmentationLFC()`` 
 returns 17 segments on the forward (+) strand and 52 segments on the reverse (-) 
 strand. Segment coordinates and associated counts can be retrieved using 
 respectively ``SummarizedExperiment::rowRanges`` and 
@@ -203,7 +237,6 @@ have the same weight ``sizeFactors = rep(1,4)``.
 
 ```{r}
 dds <- dea(
-  data              = data,
   SExp              = SExp,
   design            = ~ condition,
   sizeFactors       = rep(1,4),
@@ -212,11 +245,11 @@ dds <- dea(
 ```
 
 Regions differentially expressed (DERs) are set to 
-``rejectedHypotheses = TRUE``. On this example, ``dea()`` returns 39 DERs.
+``DER = TRUE``. On this example, ``dea()`` returns 39 DERs.
 
 ```{r}
 #- number of DERs -------------------------------------------------------------#
-DERs <- dds[SummarizedExperiment::mcols(dds)$rejectedHypotheses,]
+DERs <- dds[SummarizedExperiment::mcols(dds)$DER,]
 length(DERs)
 #- display first five DERs by position ----------------------------------------#
 DERs <- as.data.frame(SummarizedExperiment::rowRanges(DERs))
@@ -233,7 +266,7 @@ knitr::kable(DERs[1:5, colnames(DERs)%in%c(
 
 ## Step 4: Annotate the DERs 
 
-``annotateNearest()`` relies on user specified annotations in *gff3* or *gtf* 
+``annotateNearest()`` relies on user specified annotations in GFF3 or GTF 
 format to annotate the DERs found during the DEA. Seven classes
 of labels translate the relative positions of the DER and its
 closest annotation(s): antisense; upstream; downstream; inside;
@@ -246,12 +279,12 @@ exons_path <- system.file(
  package = "DiffSegR"
 )
 annotated_DERs <- annotateNearest(
-   data        = data,
-   dds         = dds,
-   annotations = exons_path,
-   select      = c("seqnames", "start", "end", "width", "strand", 
+  features = SummarizedExperiment::rowRanges(dds),   
+  annotations = exons_path,
+  select      = c("seqnames", "start", "end", "width", "strand", 
      "description", "distance", "Parent", "log2FoldChange", "pvalue"),
-   orderBy     = "pvalue"
+  orderBy     = "pvalue",
+  outputDirectory = working_directory,
 )
 knitr::kable(annotated_DERs, row.names = FALSE, digits = 3)
 ```
@@ -259,18 +292,18 @@ knitr::kable(annotated_DERs, row.names = FALSE, digits = 3)
 ## Step 5: Visualizing the DERs
 
 ``exportResults()`` saves for both strands DERs, not-DERs, segmentation, coverages 
-and log2-FC per-base in formats readable (*bedGraph*,
-*gff3*) by genome viewers like the Integrative Genome Viewer
+and log2-FC per-base in formats readable (BEDGRAPH,
+GFF3) by genome viewers like the Integrative Genome Viewer
 (IGV) (Robison et al. 2011). For IGV, ``exportResults()`` also creates an IGV 
-sessiong in *xml* format that allows loading all tracks in one click.
+sessiong in XML format that allows loading all tracks in one click.
 
 The tracks from top to bottom stand for:
 
-  1. (log2-Cov plus) the mean of coverages on the log scale for
+  1. (log2-Cov +) the mean of coverages on the log scale for
      the forward strand in both biological conditions of
      interest. Here, the blue line and the red line stand for
      wt and pnp1-1 conditions, respectively ;
-  2. (log2-FC plus) the per-base $\log_2$-FC between pnp1-1
+  2. (log2-FC +) the per-base $\log_2$-FC between pnp1-1
      (numerator) and wt (denominator) for the forward
      strand. The straight horizontal line is the zero indicator.
      When the per-base $\log_2$-FC is above or under the
@@ -279,13 +312,15 @@ The tracks from top to bottom stand for:
      $\log_2$-FC is displayed the changepoints positions (vertical blue lines)
      and the mean of each segment (horizontal blue lines that connect 
      two changepoints) ;
-  3. (DiffSegR plus) the results of the DEA on the forward strand. 
+  3. (DiffSegR +) the results of the DEA on the forward strand. 
      Up-regulated regions appear in green. Down-regulated regions appear 
      in purple. Not-DERs appear in grey ;
   4. (annotations) The features provided by the user for interpetations.
 
 Symmetrically, the rest of the tracks correspond to the same data on the 
 reverse strand.
+
+Note : 
 
 ```{r}
 ChrC_path  <- system.file(
@@ -295,7 +330,8 @@ ChrC_path  <- system.file(
 )
 exportResults(
  data            = data,
- dds             = dds, 
+ features        = SummarizedExperiment::rowRanges(dds),
+ sizeFactors     = DESeq2::sizeFactors(dds),
  outputDirectory = working_directory,
  genome          = ChrC_path,
  annotation      = exons_path,
@@ -303,22 +339,36 @@ exportResults(
 ) 
 ```
 
-
-```{r echo=FALSE, out.width='100%', fig.cap="DiffSegR output between positions 76,990 to 78,248 on the chloroplast genome. The session is loaded in IGV 2.12.3 for Linux."}
+```{r echo=FALSE, out.width='100%', fig.cap="DiffSegR output between positions 76,990 to 78,248 on the chloroplast genome. The session is loaded in IGV 2.17.2 for Linux."}
 knitr::include_graphics('igv_snapshot.png')
 ```
+In collaboration projects, users will typically send the directory containing all tracks 
+to collaborators. To load the session in IGV, the collaborator must update the 
+paths for the genome and annotations in the XML file. This step may be necessary 
+for each IGV session produced by a [multi-loci analysis](multi_loci.html). 
+To streamline this process, collaborators can modify all necessary paths directly 
+from their R environment using the `setPaths()` function.
+
+```{r, eval=FALSE}
+setPaths(
+  directory = "collaborator_igv_session(s)_directory",
+  genome    = "collaborator_genome_path",
+  annotations = "collaborator_annotations_path"
+)
+```
+
 # References 
 
 Castandet B, Hotto AM, Fei Z, Stern DB. Strand-specific RNA sequencing uncovers 
-chloroplast ribonuclease functions. FEBS Lett 587(18), 3096-101 (2013). 
+chloroplast ribonuclease functions. FEBS Lett 587(18), 3096-101 (2013) 
 [doi:10.1016/j.febslet.2013.08.004](https://febs.onlinelibrary.wiley.com/doi/10.1016/j.febslet.2013.08.004).
 
 Hotto AM, Castandet B, Gilet L, Higdon A, Condon C, Stern DB. Arabidopsis 
 chloroplast mini-ribonuclease III participates in rRNA maturation and intron 
-recycling. Plant Cell 27(3), 724-40 (2015). [doi:10.1105/tpc.114.134452](https://academic.oup.com/plcell/article/27/3/724/6118143).
+recycling. Plant Cell 27(3), 724-40 (2015) [doi:10.1105/tpc.114.134452](https://academic.oup.com/plcell/article/27/3/724/6118143).
 
 James T. Robinson, Helga Thorvaldsdóttir, Wendy Winckler, Mitchell Guttman, 
 Eric S. Lander, Gad Getz, Jill P. Mesirov. Integrative Genomics Viewer. 
-Nature Biotechnology 29, 24–26 (2011). [doi:10.1038/nbt.1754](https://www.nature.com/articles/nbt.1754).
+Nature Biotechnology 29, 24–26 (2011) [doi:10.1038/nbt.1754](https://www.nature.com/articles/nbt.1754).
 
 

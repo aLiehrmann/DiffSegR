@@ -32,26 +32,29 @@ sample_info <- data.frame(
   coverage  = file.path(
     working_directory,
     paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
-  )
-)
-#- save sample information table ----------------------------------------------# 
-write.table(
-  sample_info, 
-  file.path(working_directory, "sample_info.txt")
+  ),
+  isPairedEnd    = rep(FALSE, 4),
+  strandSpecific = rep(1, 4)
 )
 library(DiffSegR)
-nb_threads = 4
-data <- loadData(
-  sampleInfo   = file.path(working_directory,"sample_info.txt"),
-  locus        = list(
+nb_threads_tot = 4
+nb_threads_locus = 4
+data <- newExperiment(
+  sampleInfo   = sample_info,
+  loci         = data.frame(
     seqid      = "ChrC", 
     chromStart = 71950, 
-    chromEnd   = 78500
+    chromEnd   = 78500,
+    locusID    = "psbB_petD"
   ),
   referenceCondition = "wt",
-  stranded           = TRUE,
-  fromBam            = TRUE,
-  nbThreads          = nb_threads
+  otherCondition     = "pnp1_1",
+  nbThreads          = nb_threads_tot,
+  nbThreadsByLocus   = nb_threads_locus
+)
+coverage(
+  data         = data,
+  coverageType = "average"
 )
 ```
 
@@ -74,18 +77,16 @@ case it is often useful to explore several different segmentations in
 order to choose a more suitable hyperparameter $\alpha$ value.
 
 To explore all reachable segmentations between 1 to `Kmax` segments, one can pass
-`segmentNeighborhood = TRUE` and specify the value of `Kmax` to `segmentation()`.
+`segmentNeighborhood = TRUE` and specify the value of `Kmax` to `segmentationLFC()`.
 This step can be time consuming. A grid search approach is also implemented in
-**DiffSegR** (see `gridSearch` and `alphas` parameters of `segmentation()`).
+**DiffSegR** (see `gridSearch` and `alphas` parameters of `segmentationLFC()`).
 
 ```{r}
-SExp <- segmentation(
-  data                   = data, 
-  nbThreadsFeatureCounts = nb_threads,
-  outputDirectory        = working_directory,
-  segmentNeighborhood    = TRUE,
-  Kmax = 50,
-  alpha = 4
+features <- segmentationLFC(
+  data                = data, 
+  outputDirectory     = working_directory,
+  segmentNeighborhood = TRUE,
+  Kmax                = 50
 )
 ```
 
@@ -95,11 +96,10 @@ directory under the name *all_models_minus.rds* and *all_models_plus.rds*.
 
 A good practice is to select a robust segmentation. Visually it is equivalent 
 to pick the elbow of this curve. In this example we can select 
-$\log(\alpha)=2.1$ or $\alpha=4.28$ symbolized by the red line. Setting `alpha=4`
-in `segmentation()` leads to 11 segments on the reverse strand.
+$\alpha=5.46$ symbolized by the red line.
 
 ```{r echo=FALSE, dpi=300, out.width='100%', fig.align='center', fig.cap="Path of all reachable segmentations up to 50 segments of the log2-FC on reverse strand. Corresponding alpha values on the log scale can be read on X-axis."}
-all_models <- readRDS("DIFFSEGR_TEST/all_models_minus.rds")
+all_models <- readRDS("DIFFSEGR_TEST/psbB_petD/all_models_minus.rds")
 ggplot2::ggplot(
   all_models,
   ggplot2::aes(
@@ -110,7 +110,7 @@ ggplot2::ggplot(
 ggplot2::geom_line() +
 ggplot2::geom_point(size=1) +
 ggplot2::geom_vline(
-  xintercept = log2(4.3), 
+  xintercept = log2(5.46), 
   color      = "red"
 )+
 ggplot2::geom_hline(
@@ -149,9 +149,15 @@ To use post hoc inference one have to specify :
   3. the significance level of the test procedure. Here, 
   ``postHoc_significanceLevel = 0.05``.
 
+```{r,  include = FALSE}
+SExp <- counting(
+  data     = data, 
+  features = features
+)
+```
+
 ```{r}
 dds <- dea(
-  data                      = data,
   SExp                      = SExp,
   design                    = ~ condition,
   sizeFactors               = rep(1,4),
@@ -161,11 +167,11 @@ dds <- dea(
 )
 
 #- check fold-change of differentially expressed segments ---------------------#
-DERs <- dds[SummarizedExperiment::mcols(dds)$rejectedHypotheses,]
+DERs <- dds[SummarizedExperiment::mcols(dds)$DER,]
 2^abs(SummarizedExperiment::mcols(DERs)$log2FoldChange)
 ```
 
 # References 
 
 Blanchard, G., Neuvial, P. and Roquain, E. Post hoc confidence bounds on false 
-positives using reference families. Ann. Statist 48(3), 1281-1303 (2020). [doi.org/10.1214/19-AOS1847](https://hal.science/hal-01483585v5/document).
+positives using reference families. Ann. Statist 48(3), 1281-1303 (2020) [doi.org/10.1214/19-AOS1847](https://hal.science/hal-01483585v5/document).

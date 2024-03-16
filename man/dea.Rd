@@ -2,10 +2,9 @@
 % Please edit documentation in R/dea.r
 \name{dea}
 \alias{dea}
-\title{Differential expression analysis (DEA)}
+\title{Differential Expression Analysis (DEA)}
 \usage{
 dea(
-  data,
   SExp,
   design = ~condition,
   sizeFactors = NA,
@@ -13,16 +12,12 @@ dea(
   predicate = NULL,
   postHoc_significanceLevel = 0.05,
   postHoc_tdpLowerBound = 0.95,
-  orderBy = "pvalue",
-  verbose = FALSE,
-  dichotomicSearch = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
-\item{data}{The \code{List} object returned by \code{\link[=loadData]{loadData()}}.}
-
 \item{SExp}{The \code{SummarizedExperiment} object returned by
-\code{\link[=segmentation]{segmentation()}}.}
+\code{\link[=counting]{counting()}}.}
 
 \item{design}{A \code{formula} object or a \code{Matrix} object. Passed on to
 \link[DESeq2:DESeqDataSet]{DESeq2::DESeqDataSet}.}
@@ -37,21 +32,16 @@ predicate. The criteria used in the predicate have to be defined for each
 regions in mcols(SExp).}
 
 \item{postHoc_significanceLevel}{A \code{Double}. The significance level of the
-test procedure (see \link[sanssouci:posthocBySimes]{sanssouci::posthocBySimes}).}
+test procedure (See \link[sanssouci:posthocBySimes]{sanssouci::posthocBySimes}).}
 
 \item{postHoc_tdpLowerBound}{A \code{Double}. The minimum true positive
 proportion on the returned set of rejected regions.}
 
-\item{orderBy}{A \code{String}. The parameter on which regions are sorted before
-the post-hoc procedure.}
-
-\item{verbose}{A \code{Boolean}. Should all the operations performed be displayed
-(only post-hoc) ?}
-
-\item{dichotomicSearch}{A \code{Boolean}. Use it to speed up the post-hoc procedure.}
+\item{verbose}{A \code{Logical}. Should all the operations performed be displayed ?}
 }
 \value{
-A\code{DESeqDataSet} object.
+A\code{DESeqDataSet} object augmented with the metadata column \code{DER}.
+\code{DER} is set to \code{TRUE} if the region is called differentially expressed.
 }
 \description{
 \code{dea} takes as input the recently built \code{SummarizedExperiment} object and calls
@@ -60,74 +50,7 @@ between the two compared biological conditions. The user can choose to control
 all the resulting p-values or only a subset of interest. In the first case
 a Benjamini–Hochberg procedure is used to control the False Discovery Rate
 (FDR). In the second case, the user specifies selection criteria for the
-regions, e.g. a threshold on the absolute log2-FC per-regions. Then, a
+regions, e.g. a threshold on the absolute Log2-FC per-regions. Then, a
 post-hoc procedure is used to control the joint Family wise error Rate
 (jFWER) on the selected subset of regions.
-}
-\examples{
-
-# Create a working directory for running the example.
-working_directory <- "./DIFFSEGR_TEST"
-dir.create(working_directory)
-
-# Save sample information in a text file.
-sample_info <- data.frame(
-  sample    = c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"),
-  condition = rep(c("pnp1_1", "wt"), each = 2),
-  replicate = rep(1:2,2),
-  bam       = sapply(
-    c("pnp1_1_1_ChrC_71950_78500.bam", 
-      "pnp1_1_2_ChrC_71950_78500.bam",
-      "wt_1_ChrC_71950_78500.bam",
-      "wt_2_ChrC_71950_78500.bam"
-     ),
-     function(bam) system.file("extdata", bam, package = "DiffSegR")
-  ),
-  coverage  = file.path(
-    working_directory,
-    paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
-  )
-)
-write.table(
-  sample_info, 
-  file.path(working_directory, "sample_info.txt")
-)
-
-# Build coverages and log2-FC per-base.
-data <- loadData(
-  sampleInfo         = file.path(working_directory,"sample_info.txt"),
-  locus        = list(
-    seqid      = "ChrC", 
-    chromStart = 71950, 
-    chromEnd   = 78500
-  ),
-  referenceCondition = "wt",
-  stranded           = TRUE,
-  fromBam            = TRUE,
-  nbThreads          = 1
-)
-
-# Summarize the differential landscape.
-SExp <- segmentation(
-  data                   = data, 
-  nbThreadsFeatureCounts = 1,
-  outputDirectory        = working_directory
-)
-
-# Differential expression analysis. We control all the resulting 
-# p-values using a Benjamini–Hochberg procedure at level 0.01.
-dds <- dea(
-  data              = data,
-  SExp              = SExp,
-  design            = ~ condition,
-  sizeFactors       = rep(1,4),
-  significanceLevel = 1e-2
-)
-
-# first to fifth regions 
-print(SummarizedExperiment::mcols(dds)[1:5,])
-
-# delete working directory 
-unlink(working_directory, recursive = TRUE)
-
 }

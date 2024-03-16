@@ -2,6 +2,7 @@ modelSelectionFactory <- function(type) {
   fn <- switch(type,
     yao = modelSelectionFactory.yao,
     eval(parse(text=type))
+    ## user-defined segmentation method 
   )
   attr(fn, "type") <- type
   fn
@@ -9,124 +10,121 @@ modelSelectionFactory <- function(type) {
 
 modelSelectionFactory.yao <- function(
   locus,
-  coverages,
   log2FoldChange,
-  sampleInfo,
-  weightHeuristic,
-  compressed          = TRUE,
-  outputDirectory     = ".",
+  outputDirectory     = NULL,
   alpha               = 2,
   segmentNeighborhood = FALSE,
-  Kmax                = NA,
-  verbose             = FALSE,
   gridSearch          = FALSE,
-  nbThreads           = 1,
-  alphas              = NA) {
+  Kmax                = NA,
+  alphas              = NULL,
+  verbose             = TRUE) {
   
   selected_model <- list()
-  for (strand in names(coverages)){
-    message(
-    	"changepoint detection on ",
-    	as.character(GenomeInfoDb::seqnames(locus)),
-    	" ",
-    	GenomicRanges::start(locus),
-    	" ",
-    	GenomicRanges::end(locus),
-    	" ",
-    	strand, 
-    	" ..."
-    )
-    ##- weighting and compressing data ---------------------------------------##
-    obs <- preprocessing(
-      log2FoldChange  = log2FoldChange[[strand]],
-      coverages       = coverages[[strand]],
-      weightHeuristic = weightHeuristic,
-      compressed      = compressed
-    )
-    sigma   <- matrixStats::weightedSd(obs$y, obs$w)
-    n       <- sum(obs$compression_lengths)    
-    all_models <- data.frame()
-    ##- exploring models using segment neighborhood --------------------------##
-    if (segmentNeighborhood) {
-      message("  > exploring models using segment neighborhood ...")
-      all_models <- segmentNeighborhoodFn(
-        obs   = obs,
-        sigma = sigma,
-        n     = n,
-        Kmax  = Kmax
+  for (strand in names(log2FoldChange)) {
+
+    if (all(log2FoldChange[[strand]]@values==0)) {
+      
+      ## default model / no signal 
+      selected_model[[strand]] <- list(
+        K            = 1, 
+        changepoints = length(log2FoldChange[[strand]]),
+        penalty      = 0,
+        means        = 0,
+        loss         = 0
       )
-    }
-    ##- exploring models using grid search -----------------------------------##
-    if (gridSearch) {
-      message("  > exploring models using grid search ...")
-     	all_models <- gridSearchFn(
-        obs       = obs,
-        alphas    = alphas,
-        nbThreads = 1,
-        alpha     = alpha,
-        sigma     = sigma,
-        n         = n 
+    } else {    
+      sigma <- matrixStats::weightedSd(
+        log2FoldChange[[strand]]@values, 
+        log2FoldChange[[strand]]@lengths
+      )   
+
+      ## exploring some models using segment neighborhood
+      if (segmentNeighborhood) {
+        all_models <- segmentNeighborhoodFn(
+          y     = log2FoldChange[[strand]]@values,
+          w     = log2FoldChange[[strand]]@lengths,
+          sigma = sigma,
+          Kmax  = Kmax
+        )
+      }
+
+      ## exploring some models using grid search
+      if (gridSearch) {
+       	all_models <- gridSearchFn(
+          y       = log2FoldChange[[strand]]@values,
+          w       = log2FoldChange[[strand]]@lengths,
+          alphas  = alphas,
+          sigma   = sigma
+        )
+      } 
+
+      ## estimate changepoints position for user-provided alpha
+      selected_model[[strand]] <- wrapperFpopw(
+        y       = log2FoldChange[[strand]]@values,
+        w       = log2FoldChange[[strand]]@lengths,
+        penalty = alpha*sigma^2*log(length(log2FoldChange[[strand]])) 
       )
-    }  
-    ##- model selection ------------------------------------------------------##
-    message("  > model selection ...")
-    penalty <- alpha*sigma^2*log(n)
-    selected_model[[strand]] <- wrapperFpopw(
-      y       = obs$y,
-      w       = obs$w,
-      penalty = penalty
-    )
-    all_models <- rbind(
-      all_models, 
-      data.frame(
-        K      = selected_model[[strand]]$changepoints+1, 
-        alphas = alpha
-      )
-    )
-    ##- number of segments K as function of hyperparameter alpha  ------------##
-    KvsAlpha(
-      strand          = strand,
-      K               = all_models$K,
-      alphas          = all_models$alphas,
-      targetAlpha     = alpha,
-      targetK         = selected_model[[strand]]$changepoints+1,
-      outputDirectory = outputDirectory
-    )
-    ##- uncompress changepoints ----------------------------------------------##
-    if (compressed){
-      uncompressed_pos <- cumsum(obs$compression_lengths)
-      selected_model[[strand]]$changepointsVec <- uncompressed_pos[
-        selected_model[[strand]]$changepointsVec
+
+      if (gridSearch | segmentNeighborhood) {
+        
+        ## add selected model to those find with gridSearch or segmentNeighborhood
+        all_models <- rbind(
+          all_models, 
+          data.frame(
+            K      = selected_model[[strand]]$K, 
+            alphas = alpha
+          )
+        )
+
+        ## plot and save the number of segments K as function of the 
+        ## hyperparameter alpha
+        KvsAlpha(
+          locus           = locus,
+          strand          = strand,
+          K               = all_models$K,
+          alphas          = all_models$alphas,
+          targetAlpha     = alpha,
+          targetK         = selected_model[[strand]]$K,
+          outputDirectory = outputDirectory,
+          verbose         = verbose
+        )
+      }
+
+      ## uncompress changepoints
+      uncompressed_pos <- cumsum(log2FoldChange[[strand]]@lengths)
+      selected_model[[strand]]$changepoints <- uncompressed_pos[
+        selected_model[[strand]]$changepoints
       ]
     }
-    if (verbose) {
-      message(
-        "sigma: ",sigma,
-        ', penalty: ',
-        penalty,
-        ', number of changepoints: ',
-        selected_model$changepoints
-      )
-    }
   }
+
   selected_model
 }
 
 wrapperFpopw <- function(
-    y, 
-    w, 
-    penalty) {
+  y, 
+  w, 
+  penalty) {
+
+  ## estimate changepoints position
   fit <- fpopw::Fpop_w(
     x      = y, 
     w      = w, 
     lambda = penalty
   )
-  if (length(fit$t.est)==1){
+  
+  ## segments start
+  if (length(fit$t.est)==1) {
     model_starts <- 1
   } else {
-    model_starts <- c(1, fit$t.est[-length(fit$t.est)]+1)
+    ## probably sufficient, remove test
+    model_starts <- c(1, fit$t.est[-length(fit$t.est)]+1) 
   }
+
+  ## segments end
   model_ends <- fit$t.est
+  
+  ## segments mean
   means      <- sapply(
     seq_along(model_starts),
     function(i){
@@ -136,116 +134,96 @@ wrapperFpopw <- function(
       )
     }
   )
+
+  ## get mean at each position 
   y_means <- rep(means, times = diff(c(0, fit$t.est)))
+  
+  ## calculate loss 
   loss    <- sum(w*(y-y_means)^2)
+  
   list(
-    changepoints    = fit$K-1,
-    changepointsVec = fit$t.est,
+    K               = fit$K,
+    changepoints    = fit$t.est,
     penalty         = penalty,
     means           = means,
     loss            = loss
   )
 }
 
-preprocessing <- function(
-  log2FoldChange,
-  coverages, 
-  weightHeuristic, 
-  priorCounts, 
-  compressed) {
+segmentNeighborhoodFn <- function(
+  y,
+  w,
+  sigma,
+  Kmax) {
 
-  coverages <- do.call(cbind,lapply(
-    coverages, 
-    as.vector
-  ))
-  w <- weightHeuristic(
-    y     = coverages,
-    prior = priorCounts
-  )
-  log2FoldChange <- as.vector(log2FoldChange)
-  if (compressed) {
-    breaks  <- which(diff(log2FoldChange)!=0 | diff(w)!=0)
-    starts  <- c(1,breaks+1)
-    ends    <- c(breaks, length(log2FoldChange))
-    compression_lengths <- ends-starts+1
-    list(
-      y                   = log2FoldChange[starts],
-      w                   = w[starts]*compression_lengths,
-      compression_lengths = compression_lengths
-    )
-  } else {
-    list(
-      y                   = as.vector(log2FoldChange),
-      w                   = w,
-      compression_lengths = rep(1,length(log2FoldChange))
+  J_est <- fpopw::Fpsn_w_nomemory(
+    x    = y,
+    w    = w,
+    Kmax = Kmax+1
+  )$J.est
+  
+  J_est    <- rev(J_est)
+  J_star   <- J_est[[1]]
+  K_star   <- length(J_est)
+  pen_star <- 0
+
+  ## introduce new candidate model at each iteration
+  for (x in 2:length(J_est)) {
+
+    ## find optimal model on [pen_star[[last]]; + inf] by comparing
+    ## new model with pevious ones 
+    last    <- length(J_star)
+    new_pen <- (J_est[[x]]-J_star[[last]])/(K_star[[last]]-(length(J_est)-x+1))
+    while(new_pen<=pen_star[[last]]) {
+      last    <- last-1
+      new_pen <- (J_est[[x]]-J_star[[last]])/(K_star[[last]]-(length(J_est)-x+1))
+    }
+
+    ## save last optimal model
+    J_star    <- c(J_star[1:last],J_est[[x]])
+    K_star    <- c(K_star[1:last],length(J_est)-x+1)
+    pen_star <- c(
+      pen_star[1:last],
+      (J_star[[length(J_star)-1]]-J_star[[length(J_star)]])/(K_star[[length(K_star)]]-K_star[[length(K_star)-1]])
     )
   }
-}
 
-segmentNeighborhoodFn <- function(
-  obs,
-  sigma,
-  n,
-  Kmax) {
-  
-  res_sn <- fpopw::Fpsn_w_nomemory(
-    x    = obs$y,
-    w    = obs$w,
-    Kmax = Kmax
-  )
-  J_est    <- res_sn$J.est
-  pen_star <- sapply(
-	  seq_along(J_est)[-length(J_est)], 
-	  function(i){
-	    max(sapply(
-	      (i+1):length(J_est), 
-	      function(j){
-	        (J_est[j]-J_est[i])/(i-j)
-	      }
-	    ))
-	  }
-  )
-  K <- unique(sapply(
-    seq_along(pen_star), 
-    function(i) which.min(pen_star[1:i])
-  ))
-  alphas <- pen_star[K]/(sigma^2*log(n))
-  data.frame(K,alphas)
+  pen_star <- pen_star[-1]
+  K_star   <- K_star[-1]
+  alphas   <- (pen_star + c(diff(pen_star)/2,1))/(sigma^2*log(sum(w)))
+  data.frame(K=rev(K_star),alphas=rev(alphas))
 }
 
 gridSearchFn <- function(
-  strand,
-  obs,
+  y,
+  w,
   alphas,
-  alpha,
-  sigma,
-  n,
-  nbThreads = 1) {
-  cl <- parallel::makeCluster(nbThreads) #- Is it as fast as mclapply ? -------#
-  K  <- unlist(parallel::parLapply(
-    cl,
+  sigma) {
+  ## estimate the number of segments for each user-provided alphas
+  K  <- unlist(lapply(
     alphas, 
-    function(alpha){
+    function(alpha) {
       wrapperFpopw(
-        y       = obs$y,
-        w       = obs$w,
-        penalty = alpha*sigma^2*log(n)
+        y       = y,
+        w       = w,
+        penalty = alpha*sigma^2*log(sum(w))
       )$changepoints+1
-    }#, mc.cores=nbThreads
+    }
   ))
-  parallel::stopCluster(cl)
   data.frame(K,alphas)
 }
 
 KvsAlpha <- function(
+  locus, 
   strand,
   K,
   alphas,
   targetAlpha,
   targetK,
-  outputDirectory = "."
-  ){
-  segments <- c() #- bait for devtools::check() -------------------------------#
+  outputDirectory,
+  verbose) {
+  
+  segments <- c() ## bait for devtools::check()
   g <- ggplot2::ggplot(
     data.frame(
       alphas   = alphas,
@@ -255,15 +233,12 @@ KvsAlpha <- function(
       x = log2(alphas), 
       y = segments
     )
-  )+
-  ggplot2::theme_bw()
+  ) + ggplot2::theme_bw()
 
   if (length(alphas)==1) {
     g <- g + ggplot2::geom_point()
   } else {
-    g <- g + 
-    ggplot2::geom_line() +
-    ggplot2::geom_point(size=1) 
+    g <- g + ggplot2::geom_line() + ggplot2::geom_point(size=1) 
   }
   
   g <- g + ggplot2::geom_vline(
@@ -276,31 +251,39 @@ KvsAlpha <- function(
   )+
   ggplot2::xlab("log2(alpha)")+
   ggplot2::ylab("number of segments (K)")+
-  #ggplot2::scale_x_continuous(tr="log2")+
   ggplot2::theme(
     text = ggplot2::element_text(size = 20)
-  ) 
+  )
+
+  current_output_dir <- file.path(outputDirectory, locus$locusID)
+    if(!file.exists(current_output_dir)) {
+      dir.create(file.path(outputDirectory, current_locus$locusID))
+    }
+
   grDevices::pdf(
     file.path(
-      outputDirectory, 
-      paste0("all_models_", strand, ".pdf")
+      current_output_dir, 
+      paste0(
+        "all_models_",
+        strand, 
+        ".pdf"
+      )
     ), 
     width  = 11, 
     height = 10
   )
   print(g)
   grDevices::dev.off()
-  message(paste0(
-    "  > report available in ",
-    file.path(
-      outputDirectory, 
-      paste0("all_models_", strand, ".pdf")
-    )
-  ))
+
   saveRDS(
-    data.frame(K,alphas), 
-    file.path(
-      outputDirectory,
-      paste0("all_models_", strand,".rds")
-  )) 
+    object = data.frame(K,alphas), 
+    file   = file.path(
+      current_output_dir, 
+      paste0(
+        "all_models_",
+        strand, 
+        ".rds"
+      )
+    )
+  ) 
 }

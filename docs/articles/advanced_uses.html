@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Advanced uses of DiffSegR">
 <meta property="og:description" content="DiffSegR">
@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DiffSegR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,9 @@
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../articles/advanced_uses.html">Advanced tutorials</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../articles/multi_loci.html">Multi-loci analysis</a>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
@@ -75,8 +78,7 @@
 
 
 
-
-<div class="row">
+<script src="advanced_uses_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Advanced uses of DiffSegR</h1>
             
@@ -101,98 +103,20 @@
 <h2 id="exploring-more-segmentations">Exploring more segmentations<a class="anchor" aria-label="anchor" href="#exploring-more-segmentations"></a>
 </h2>
 <p>After visual inspection, one can disagree with the segmentation of the <span class="math inline">\(\log_2\)</span>-FC proposed by <strong>DiffSegR</strong>. It can happen when spurious changepoints, resulting from an over-segmentation of the <span class="math inline">\(\log_2\)</span>-FC, seems to be added. In this case it is often useful to explore several different segmentations in order to choose a more suitable hyperparameter <span class="math inline">\(\alpha\)</span> value.</p>
-<p>To explore all reachable segmentations between 1 to <code>Kmax</code> segments, one can pass <code>segmentNeighborhood = TRUE</code> and specify the value of <code>Kmax</code> to <code><a href="../reference/segmentation.html">segmentation()</a></code>. This step can be time consuming. A grid search approach is also implemented in <strong>DiffSegR</strong> (see <code>gridSearch</code> and <code>alphas</code> parameters of <code><a href="../reference/segmentation.html">segmentation()</a></code>).</p>
+<p>To explore all reachable segmentations between 1 to <code>Kmax</code> segments, one can pass <code>segmentNeighborhood = TRUE</code> and specify the value of <code>Kmax</code> to <code><a href="../reference/segmentationLFC.html">segmentationLFC()</a></code>. This step can be time consuming. A grid search approach is also implemented in <strong>DiffSegR</strong> (see <code>gridSearch</code> and <code>alphas</code> parameters of <code><a href="../reference/segmentationLFC.html">segmentationLFC()</a></code>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SExp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/segmentation.html">segmentation</a></span><span class="op">(</span></span>
-<span>  data                   <span class="op">=</span> <span class="va">data</span>, </span>
-<span>  nbThreadsFeatureCounts <span class="op">=</span> <span class="va">nb_threads</span>,</span>
-<span>  outputDirectory        <span class="op">=</span> <span class="va">working_directory</span>,</span>
-<span>  segmentNeighborhood    <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  Kmax <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">4</span></span>
+<code class="sourceCode R"><span><span class="va">features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/segmentationLFC.html">segmentationLFC</a></span><span class="op">(</span></span>
+<span>  data                <span class="op">=</span> <span class="va">data</span>, </span>
+<span>  outputDirectory     <span class="op">=</span> <span class="va">working_directory</span>,</span>
+<span>  segmentNeighborhood <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Kmax                <span class="op">=</span> <span class="fl">50</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; changepoint detection on ChrC 71950 78500 plus ...</span></span>
-<span><span class="co">#&gt;   &gt; exploring models using segment neighborhood ...</span></span>
-<span><span class="co">#&gt;   &gt; model selection ...</span></span>
-<span><span class="co">#&gt;   &gt; report available in ./DIFFSEGR_TEST/all_models_plus.pdf</span></span>
-<span><span class="co">#&gt; changepoint detection on ChrC 71950 78500 minus ...</span></span>
-<span><span class="co">#&gt;   &gt; exploring models using segment neighborhood ...</span></span>
-<span><span class="co">#&gt;   &gt; model selection ...</span></span>
-<span><span class="co">#&gt;   &gt; report available in ./DIFFSEGR_TEST/all_models_minus.pdf</span></span>
-<span><span class="co">#&gt; finished in 0.618608951568604 secs</span></span>
-<span><span class="co">#&gt; counting ...</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;         ==========     _____ _    _ ____  _____  ______          _____  </span></span>
-<span><span class="co">#&gt;         =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \ </span></span>
-<span><span class="co">#&gt;           =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |</span></span>
-<span><span class="co">#&gt;             ====      \___ \| |  | |  _ &lt;|  _  /|  __|   / /\ \ | |  | |</span></span>
-<span><span class="co">#&gt;               ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |</span></span>
-<span><span class="co">#&gt;         ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/</span></span>
-<span><span class="co">#&gt;        Rsubread 2.10.4</span></span>
+<span><span class="co">#&gt;  &gt; Segmenting the log2-FC of locus ChrC 71950-78500 (ID : psbB_petD) ...</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; //========================== featureCounts setting ===========================\\</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; ||             Input files : 4 BAM files                                      ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; ||                           pnp1_1_1_ChrC_71950_78500.bam                    ||</span></span>
-<span><span class="co">#&gt; ||                           pnp1_1_2_ChrC_71950_78500.bam                    ||</span></span>
-<span><span class="co">#&gt; ||                           wt_1_ChrC_71950_78500.bam                        ||</span></span>
-<span><span class="co">#&gt; ||                           wt_2_ChrC_71950_78500.bam                        ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; ||              Paired-end : no                                               ||</span></span>
-<span><span class="co">#&gt; ||        Count read pairs : no                                               ||</span></span>
-<span><span class="co">#&gt; ||              Annotation : R data.frame                                     ||</span></span>
-<span><span class="co">#&gt; ||      Dir for temp files : .                                                ||</span></span>
-<span><span class="co">#&gt; ||                 Threads : 4                                                ||</span></span>
-<span><span class="co">#&gt; ||                   Level : meta-feature level                               ||</span></span>
-<span><span class="co">#&gt; ||      Multimapping reads : counted                                          ||</span></span>
-<span><span class="co">#&gt; || Multi-overlapping reads : counted                                          ||</span></span>
-<span><span class="co">#&gt; ||   Min overlapping bases : 1                                                ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; \\============================================================================//</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; //================================= Running ==================================\\</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid49626 ...         ||</span></span>
-<span><span class="co">#&gt; ||    Features : 28                                                           ||</span></span>
-<span><span class="co">#&gt; ||    Meta-features : 28                                                      ||</span></span>
-<span><span class="co">#&gt; ||    Chromosomes/contigs : 1                                                 ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Process BAM file pnp1_1_1_ChrC_71950_78500.bam...                          ||</span></span>
-<span><span class="co">#&gt; ||    Strand specific : stranded                                              ||</span></span>
-<span><span class="co">#&gt; ||    Single-end reads are included.                                          ||</span></span>
-<span><span class="co">#&gt; ||    Total alignments : 24260                                                ||</span></span>
-<span><span class="co">#&gt; ||    Successfully assigned alignments : 24260 (100.0%)                       ||</span></span>
-<span><span class="co">#&gt; ||    Running time : 0.00 minutes                                             ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Process BAM file pnp1_1_2_ChrC_71950_78500.bam...                          ||</span></span>
-<span><span class="co">#&gt; ||    Strand specific : stranded                                              ||</span></span>
-<span><span class="co">#&gt; ||    Single-end reads are included.                                          ||</span></span>
-<span><span class="co">#&gt; ||    Total alignments : 21100                                                ||</span></span>
-<span><span class="co">#&gt; ||    Successfully assigned alignments : 21100 (100.0%)                       ||</span></span>
-<span><span class="co">#&gt; ||    Running time : 0.00 minutes                                             ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Process BAM file wt_1_ChrC_71950_78500.bam...                              ||</span></span>
-<span><span class="co">#&gt; ||    Strand specific : stranded                                              ||</span></span>
-<span><span class="co">#&gt; ||    Single-end reads are included.                                          ||</span></span>
-<span><span class="co">#&gt; ||    Total alignments : 17533                                                ||</span></span>
-<span><span class="co">#&gt; ||    Successfully assigned alignments : 17533 (100.0%)                       ||</span></span>
-<span><span class="co">#&gt; ||    Running time : 0.00 minutes                                             ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Process BAM file wt_2_ChrC_71950_78500.bam...                              ||</span></span>
-<span><span class="co">#&gt; ||    Strand specific : stranded                                              ||</span></span>
-<span><span class="co">#&gt; ||    Single-end reads are included.                                          ||</span></span>
-<span><span class="co">#&gt; ||    Total alignments : 14070                                                ||</span></span>
-<span><span class="co">#&gt; ||    Successfully assigned alignments : 14070 (100.0%)                       ||</span></span>
-<span><span class="co">#&gt; ||    Running time : 0.00 minutes                                             ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Write the final count table.                                               ||</span></span>
-<span><span class="co">#&gt; || Write the read assignment summary.                                         ||</span></span>
-<span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; \\============================================================================//</span></span>
-<span><span class="co">#&gt; finished in 0.126221656799316 secs</span></span></code></pre></div>
+<span><span class="co">#&gt;  &gt; Finished in 0.834904432296753 secs</span></span></code></pre></div>
 <p>The figures showing the path of all reachable segmentations up to <code>Kmax</code> segments of the log2-FC on reverse and forward strands are accessible in the working directory under the name <em>all_models_minus.rds</em> and <em>all_models_plus.rds</em>.</p>
-<p>A good practice is to select a robust segmentation. Visually it is equivalent to pick the elbow of this curve. In this example we can select <span class="math inline">\(\log(\alpha)=2.1\)</span> or <span class="math inline">\(\alpha=4.28\)</span> symbolized by the red line. Setting <code>alpha=4</code> in <code><a href="../reference/segmentation.html">segmentation()</a></code> leads to 11 segments on the reverse strand.</p>
+<p>A good practice is to select a robust segmentation. Visually it is equivalent to pick the elbow of this curve. In this example we can select <span class="math inline">\(\alpha=5.46\)</span> symbolized by the red line.</p>
 <div class="figure" style="text-align: center">
 <img src="advanced_uses_files/figure-html/unnamed-chunk-4-1.png" alt="Path of all reachable segmentations up to 50 segments of the log2-FC on reverse strand. Corresponding alpha values on the log scale can be read on X-axis." width="100%"><p class="caption">
 Path of all reachable segmentations up to 50 segments of the log2-FC on reverse strand. Corresponding alpha values on the log scale can be read on X-axis.
@@ -211,7 +135,6 @@ Path of all reachable segmentations up to 50 segments of the log2-FC on reverse 
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dea.html">dea</a></span><span class="op">(</span></span>
-<span>  data                      <span class="op">=</span> <span class="va">data</span>,</span>
 <span>  SExp                      <span class="op">=</span> <span class="va">SExp</span>,</span>
 <span>  design                    <span class="op">=</span> <span class="op">~</span> <span class="va">condition</span>,</span>
 <span>  sizeFactors               <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">4</span><span class="op">)</span>,</span>
@@ -219,27 +142,33 @@ Path of all reachable segmentations up to 50 segments of the log2-FC on reverse 
 <span>  postHoc_significanceLevel <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  postHoc_tdpLowerBound     <span class="op">=</span> <span class="fl">0.95</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt;   &gt; differential expression analysis ...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  &gt; differential expression analysis ...</span></span>
 <span><span class="co">#&gt; renaming the first element in assays to 'counts'</span></span>
 <span><span class="co">#&gt; gene-wise dispersion estimates</span></span>
 <span><span class="co">#&gt; mean-dispersion relationship</span></span>
 <span><span class="co">#&gt; final dispersion estimates</span></span>
-<span><span class="co">#&gt;   &gt;  multiple testing correction ...</span></span>
-<span><span class="co">#&gt;   &gt;  normalize denoised log2-FC and coverage ...</span></span>
-<span><span class="co">#&gt;   &gt;  postHoc selection ...</span></span>
-<span><span class="co">#&gt; 21 rejected hypotheses with at least 0.952380952380952 of true positives.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  &gt; multiple testing correction ...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  &gt; postHoc selection ...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  &gt; 37 DERs with at least 0.972972972972973 of true positives.</span></span>
 <span></span>
 <span><span class="co">#- check fold-change of differentially expressed segments ---------------------#</span></span>
-<span><span class="va">DERs</span> <span class="op">&lt;-</span> <span class="va">dds</span><span class="op">[</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu">mcols</span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">$</span><span class="va">rejectedHypotheses</span>,<span class="op">]</span></span>
+<span><span class="va">DERs</span> <span class="op">&lt;-</span> <span class="va">dds</span><span class="op">[</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu">mcols</span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">$</span><span class="va">DER</span>,<span class="op">]</span></span>
 <span><span class="fl">2</span><span class="op">^</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu">mcols</span><span class="op">(</span><span class="va">DERs</span><span class="op">)</span><span class="op">$</span><span class="va">log2FoldChange</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1]  2.122779  2.034771  2.320207  3.351678  3.807408  4.991526 24.968253</span></span>
-<span><span class="co">#&gt;  [8]  8.352940  2.833332  7.733332 14.499984 15.714271 17.666617 19.499909</span></span>
-<span><span class="co">#&gt; [15]  3.318839  3.119999  3.903844  3.730767  4.062498  3.686272  4.174997</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1]  2.122779  2.034771  2.320207  3.351678  3.807408  4.991526 24.968252</span></span>
+<span><span class="co">#&gt;  [8] 15.124988  5.923075 20.499897 13.499973 14.499983 13.999986 13.428559</span></span>
+<span><span class="co">#&gt; [15] 11.714275 23.999928 23.333263 17.666614 19.499904  2.655736  3.096773</span></span>
+<span><span class="co">#&gt; [22]  2.999999  3.194028  3.246375  3.140844  3.140844  3.531248  3.328357</span></span>
+<span><span class="co">#&gt; [29]  3.903844  3.784312  3.784312  4.062498  3.686272  4.351348  4.548383</span></span>
+<span><span class="co">#&gt; [36]  4.187497  5.470581</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Blanchard, G., Neuvial, P. and Roquain, E. Post hoc confidence bounds on false positives using reference families. Ann. Statist 48(3), 1281-1303 (2020). <a href="https://hal.science/hal-01483585v5/document" class="external-link">doi.org/10.1214/19-AOS1847</a>.</p>
+<p>Blanchard, G., Neuvial, P. and Roquain, E. Post hoc confidence bounds on false positives using reference families. Ann. Statist 48(3), 1281-1303 (2020) <a href="https://hal.science/hal-01483585v5/document" class="external-link">doi.org/10.1214/19-AOS1847</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

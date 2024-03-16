@@ -2,28 +2,28 @@
 % Please edit documentation in R/annotateNearest.r
 \name{annotateNearest}
 \alias{annotateNearest}
-\title{Annotate each provided differentialy expressed region (DER) with its
-closest annotation(s)}
+\title{Annotate Each Provided Differentialy Expressed Region (DER) with Its
+Closest Annotation(s)}
 \usage{
 annotateNearest(
-  data,
-  dds,
+  features,
   annotations,
   outputDirectory = NULL,
   annotationsType = NULL,
   orderBy = "start",
-  select = NULL
+  select = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{data}{The \code{List} object returned by \code{\link[=loadData]{loadData()}}.}
+\item{features}{A \code{GenomicRanges} object augmented with the DER column, which
+indicates if the region is differentially expressed, as returned by
+DiffSegR::dea().}
 
-\item{dds}{The \code{DESeqDataSet} object returned by \code{\link[=dea]{dea()}}.}
-
-\item{annotations}{A \code{String}. Path to the annotation file (in gff or gtf
+\item{annotations}{A \code{String}. Path to the annotation file (in GFF or GTF
 format).}
 
-\item{outputDirectory}{A \code{String}. Absolute path to the output directory.}
+\item{outputDirectory}{A \code{String}. Path to the output directory.}
 
 \item{annotationsType}{A vector of \code{String}. Keep only matching annotations.}
 
@@ -33,14 +33,17 @@ annotations are sorted.}
 \item{select}{A vector of \code{String}. Keep only columns matching these
 names in the returned \code{Data.frame}. By default all columns from
 mcols(dds) and mcols(annotations) are kept.}
+
+\item{verbose}{A \code{Boolean}. Should all the operations performed be displayed ?}
 }
 \value{
 Annotated differentialy expressed regions as \code{Data.frame} object.
 }
 \description{
-\code{annotateNearest()} relies on user specified annotations in gff3 or gtf
-format to annotate the DERs found during the DEA. Seven classes of labels
-translate the relative positions of the DER and its closest annotation(s):
+\code{annotateNearest()} relies on user-specified annotations in GFF or GTF
+format to annotate the DERs found during the differential expression analysis.
+Seven classes of labels translate the relative positions of the stranded DER
+and its closest annotation(s):
 \itemize{
 \item antisense ;
 \item upstream ;
@@ -50,83 +53,6 @@ translate the relative positions of the DER and its closest annotation(s):
 \item overlapping 5’ ;
 \item overlapping 5’, 3’.
 }
-}
-\examples{
-# Create a working directory for running the example.
-working_directory <- "./DIFFSEGR_TEST"
-dir.create(working_directory)
-
-# Save sample information in a text file.
-sample_info <- data.frame(
-  sample    = c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"),
-  condition = rep(c("pnp1_1", "wt"), each = 2),
-  replicate = rep(1:2,2),
-  bam       = sapply(
-    c("pnp1_1_1_ChrC_71950_78500.bam", 
-      "pnp1_1_2_ChrC_71950_78500.bam",
-      "wt_1_ChrC_71950_78500.bam",
-      "wt_2_ChrC_71950_78500.bam"
-     ),
-     function(bam) system.file("extdata", bam, package = "DiffSegR")
-  ),
-  coverage  = file.path(
-    working_directory,
-    paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
-  )
-)
-write.table(
-  sample_info, 
-  file.path(working_directory, "sample_info.txt")
-)
-
-# Build coverages and log2-FC per-base.
-data <- loadData(
-  sampleInfo         = file.path(working_directory,"sample_info.txt"),
-  locus        = list(
-    seqid      = "ChrC", 
-    chromStart = 71950, 
-    chromEnd   = 78500
-  ),
-  referenceCondition = "wt",
-  stranded           = TRUE,
-  fromBam            = TRUE,
-  nbThreads          = 1
-)
-
-# Summarize the differential landscape.
-SExp <- segmentation(
-  data                   = data, 
-  nbThreadsFeatureCounts = 1,
-  outputDirectory        = working_directory
-)
-
-# Differential expression analysis. We control all the resulting 
-# p-values using a Benjamini–Hochberg procedure at level 0.01.
-dds <- dea(
-  data              = data,
-  SExp              = SExp,
-  design            = ~ condition,
-  sizeFactors       = rep(1,4),
-  significanceLevel = 1e-2
-)
-
-# Annotate each differential expressed region with its closest annotation(s).
-exons_path <- system.file(
-  "extdata", 
-  "TAIR10_ChrC_exon.gff3", 
-  package = "DiffSegR"
-)
-annotated_DERs <- annotateNearest(
-  data        = data,
-  dds         = dds,
-  annotations = exons_path,
-  select      = c("seqnames", "start", "end", "width", "strand", 
-    "description", "distance", "Parent", "log2FoldChange", "pvalue"),
-  orderBy     = "pvalue"
-)
-print(annotated_DERs[1:10,])
-
-# delete working directory 
-unlink(working_directory, recursive = TRUE)
-
+For the non-stranded DERs, the two classes of labels are: overlapping and
+non-overlapping.
 }

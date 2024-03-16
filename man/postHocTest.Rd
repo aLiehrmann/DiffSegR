@@ -2,46 +2,30 @@
 % Please edit documentation in R/postHocTest.r
 \name{postHocTest}
 \alias{postHocTest}
-\title{postHocTest}
+\title{Multiple Tests Correction Through Post-hoc Inference}
 \usage{
-postHocTest(
-  SExp,
-  predicate,
-  alpha,
-  tdpLowerBound,
-  orderBy = "pvalue",
-  verbose = FALSE,
-  dichotomicSearch = FALSE
-)
+postHocTest(SExp, predicate, alpha, tdpLowerBound, verbose = TRUE)
 }
 \arguments{
 \item{SExp}{An object that inherits from the \code{SummarizedExperiment} class and
 augmented with the results of the differential expression analysis.}
 
 \item{predicate}{A predicate function that returns a single TRUE or FALSE if
-the hypothesis on which it is applied meets the conditions defined in the
+the regions on which it is applied meets the conditions defined in the
 predicate. The criteria used in the predicate have to be defined for each
-hypotheses in mcols(SExp).}
+regions in mcols(SExp).}
 
 \item{alpha}{A \code{Double}. The significance level of the (post-hoc) confidence
-bound on the type 1 error (see \link[sanssouci:posthocBySimes]{sanssouci::posthocBySimes}).}
+bound on the type 1 error (See \link[sanssouci:posthocBySimes]{sanssouci::posthocBySimes}).}
 
 \item{tdpLowerBound}{A value for the minimum true positive rate
 on the returned set of rejected regions.}
 
-\item{orderBy}{A \code{String}. The parameter on which regions are ordered before
-the post-hoc procedure.}
-
-\item{verbose}{A \code{Boolean}. Should all the operations performed be displayed ?}
-
-\item{dichotomicSearch}{A \code{Boolean}. Use it to speed up the post-hoc procedure.}
+\item{verbose}{A \code{Logical}. Should all the operations performed be displayed ?}
 }
 \value{
-The \code{SummarizedExperiment} object returned by
-\code{\link[=segmentation]{segmentation()}} augmented with the metadata column
-\code{rejectedHypotheses}. The rejected regions belong to the largest set of
-selected regions with a true positive rate of at least \code{tdpLowerBound}
-on the \code{alpha} level.
+The \code{SExp} input object augmented with the metadata column
+\code{DER}. \code{DER} is set to \code{TRUE} if the region is called differentially expressed.
 }
 \description{
 Wrapper function around \code{sanssouci::posthocBySimes}

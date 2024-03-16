@@ -1,5 +1,6 @@
-#' postHocTest
+#' Multiple Tests Correction Through Post-hoc Inference
 #' 
+#' @description 
 #' Wrapper function around \code{sanssouci::posthocBySimes} 
 #' (Blanchard et al., 2020, doi:10.1214/19-AOS1847) for multiple tests correction 
 #' through post-hoc inference. 
@@ -7,23 +8,17 @@
 #' @param SExp An object that inherits from the `SummarizedExperiment` class and
 #' augmented with the results of the differential expression analysis. 
 #' @param predicate A predicate function that returns a single TRUE or FALSE if
-#' the hypothesis on which it is applied meets the conditions defined in the 
+#' the regions on which it is applied meets the conditions defined in the 
 #' predicate. The criteria used in the predicate have to be defined for each
-#' hypotheses in mcols(SExp).
+#' regions in mcols(SExp).
 #' @param alpha  A `Double`. The significance level of the (post-hoc) confidence 
-#' bound on the type 1 error (see [sanssouci::posthocBySimes]).
+#' bound on the type 1 error (See [sanssouci::posthocBySimes]).
 #' @param tdpLowerBound A value for the minimum true positive rate 
 #' on the returned set of rejected regions.
-#' @param orderBy A `String`. The parameter on which regions are ordered before 
-#' the post-hoc procedure. 
-#' @param dichotomicSearch A `Boolean`. Use it to speed up the post-hoc procedure.
-#' @param verbose A `Boolean`. Should all the operations performed be displayed ?
+#' @param verbose A `Logical`. Should all the operations performed be displayed ?
 #' 
-#' @return The `SummarizedExperiment` object returned by 
-#' [DiffSegR::segmentation()] augmented with the metadata column 
-#' `rejectedHypotheses`. The rejected regions belong to the largest set of 
-#' selected regions with a true positive rate of at least `tdpLowerBound` 
-#' on the `alpha` level.
+#' @return The `SExp` input object augmented with the metadata column 
+#' `DER`. `DER` is set to `TRUE` if the region is called differentially expressed.
 #' 
 #' @export
 postHocTest <- function(
@@ -31,100 +26,71 @@ postHocTest <- function(
   predicate, 
   alpha, 
   tdpLowerBound,
-  orderBy          = "pvalue",
-  verbose          = FALSE,
-  dichotomicSearch = FALSE) {
+  verbose          = TRUE) {
+	
+	## Authors would like to thank Pierre Neuvial for his help with the use of 
+	## the sansSouci package.
+
+	## Simes family of thresholds (See 
+	## https://doi.org/10.1093/bioinformatics/btac693)
+	thr_simes <- alpha*(1:length(SExp))/length(SExp)
+
+	
+	## genomic regions meeting the user-defined thresholds
+	selected_hypotheses <- which(predicate(GenomicRanges::mcols(SExp)))
   
-  metadata            <- GenomicRanges::mcols(SExp)
-  original_order      <- order(metadata[[orderBy]])
-  metadata            <- metadata[original_order,]
-  metadata            <- metadata[!is.na(metadata[[orderBy]]),]
-  selected_hypotheses <- which(predicate(metadata))
-  
-  if (dichotomicSearch){
-  #- assumption: tp_lower_bound is a decreasing function of p-val. ------------#
-  #- therefore, we can use a dichotomic search. 
-  	dicotomicSearch <- function(
-  	  iLowerBound, 
-  	  iUpperBound) {
-  	  len <- iUpperBound - iLowerBound+1
-  	  if (verbose) message(len)
-  	  if (len>2){
-  	    m <- round((iUpperBound+iLowerBound)/2)
-  	    tp_lower_bound <- sanssouci::posthocBySimes(
-  	      p      = metadata[[orderBy]], 
-  	      select = selected_hypotheses[1:m], 
-  	      alpha  = alpha,
-  	      Rcpp = TRUE
-  	    )
-  	    tp_rate <- tp_lower_bound/m
-  	    if (verbose) message(tp_rate)
-  	    if (tp_rate == tdpLowerBound){ #- maybe accept threshold here -------#
-  	      m
-  	    } else if (tp_rate > tdpLowerBound) {
-  	      dicotomicSearch(m+1,iUpperBound)
-  	    } else {
-  	      dicotomicSearch(iLowerBound,m-1)
-  	    }
-  	  } else {
-        tp_lower_bound <- sanssouci::posthocBySimes(
-  	      p      = metadata[[orderBy]], 
-  	      select = selected_hypotheses[1:iLowerBound], 
-  	      alpha  = alpha,
-  	      Rcpp = TRUE
-  	    )
-        tp_upper_bound <- sanssouci::posthocBySimes(
-  	      p      = metadata[[orderBy]], 
-  	      select = selected_hypotheses[1:iUpperBound], 
-  	      alpha  = alpha,
-  	      Rcpp = TRUE
-  	    )
-        if (tp_upper_bound/iUpperBound>tdpLowerBound){
-          iUpperBound
-        } else if (tp_lower_bound/iLowerBound>tdpLowerBound){
-          iLowerBound
-        } else {
-  	      iLowerBound-1
-        }
-  	  }
-  	}
-  	last_selected_hypothesis <- dicotomicSearch(1,length(selected_hypotheses))
-  } else {
-  	lower_bound_tp <- sapply(
-			seq_along(selected_hypotheses), 
-			function(x){
-				sanssouci::posthocBySimes(
-					p      = metadata[[orderBy]], 
-					select = selected_hypotheses[1:x], 
-					alpha  = alpha, 
-					Rcpp   = TRUE
-				)
-			}
+	if (length(selected_hypotheses)==0) {
+		
+		if (verbose) message("\n > No genomic regions have met the thresholds defined by the user.")
+		GenomicRanges::mcols(SExp)$DER <- FALSE
+
+	} else {
+		
+		## upper bound for the number of false discoveries among most
+		## significant regions
+		fp <- sanssouci:::curveMaxFP(
+			p.values = GenomicRanges::mcols(SExp)$pvalue[selected_hypotheses], 
+			thr      = thr_simes
 		)
-		if (length(lower_bound_tp)>0){
-			last_selected_hypothesis <- sum(
-				lower_bound_tp/seq_along(selected_hypotheses)>tdpLowerBound
+
+		## size of the largest set of genomic regions meeting the user-defined 
+		## thresholds as well as a lower TDP bound that also satisfies a threshold 
+		## set by the user
+		nb_rejected <- sum(1-fp/(1:length(fp))>=tdpLowerBound)
+	
+		if (nb_rejected>0) {
+			
+			## largest pvalue to reject amongst selected genomic regions
+			bound <- sort(GenomicRanges::mcols(SExp)$pvalue[selected_hypotheses])[nb_rejected]
+
+			GenomicRanges::mcols(SExp)$DER <- FALSE
+			GenomicRanges::mcols(SExp)$DER[selected_hypotheses] <- TRUE
+			GenomicRanges::mcols(SExp)$DER[GenomicRanges::mcols(SExp)$pvalue>bound] <- FALSE
+
+			## if several genomic regions on the bound reject only one of them
+			x <- GenomicRanges::mcols(SExp)$pvalue==bound & GenomicRanges::mcols(SExp)$DER
+			GenomicRanges::mcols(SExp)$DER[x] <- c(
+				TRUE, 
+				rep(FALSE, length(GenomicRanges::mcols(SExp)$DER[x])-1)
 			)
+
+			if (verbose) {
+				message(
+					"\n > ",
+  	  		sum(GenomicRanges::mcols(SExp)$DER), 
+  	  		" DERs with at least ", 
+  	  		1-fp[[nb_rejected]]/nb_rejected, 
+  	  		" of true positives."
+  			)
+			}
+		
 		} else {
-			last_selected_hypothesis <- c()
+			
+			GenomicRanges::mcols(SExp)$DER <- FALSE
+			if (verbose)	message("\n > 0 rejected hypotheses.")
+		
 		}
-  }
-  tp <- sanssouci::posthocBySimes(
-  	p      = metadata[[orderBy]], 
-  	select = selected_hypotheses[1:last_selected_hypothesis], 
-  	alpha  = alpha,
-  	Rcpp = TRUE
-  )
-  rejected_hypotheses <- rep(FALSE, nrow(SExp))
-  if (length(last_selected_hypothesis)>0){
-  	rejected_hypotheses[selected_hypotheses[1:last_selected_hypothesis]] <- TRUE
-  }
-  GenomicRanges::mcols(SExp)$rejectedHypotheses <- rejected_hypotheses[order(original_order)]
-  message(
-    sum(GenomicRanges::mcols(SExp)$rejectedHypotheses), 
-    " rejected hypotheses with at least ", 
-    tp/(last_selected_hypothesis), 
-    " of true positives."
-  )
-  SExp
+	}
+	
+	return(SExp)
 }

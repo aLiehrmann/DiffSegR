@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 # DiffSegR <img src="man/figures/logo.png" style="float:right; height:250px;" />
@@ -50,20 +52,23 @@ See the [introductory
 tutorial](https://aliehrmann.github.io/DiffSegR/articles/introductory_tutorial.html)
 for an introduction to our framework on real data. See the [advanced
 tutorial](https://aliehrmann.github.io/DiffSegR/articles/advanced_uses.html)
-for examples of more advanced uses of `DiffSegR`.
+for examples of more advanced uses of `DiffSegR`. If you’re interested
+in analyzing multiple loci, including entire chromosomes, after reading
+the introduction, go take a look at our [Multi-loci
+analysis](https://aliehrmann.github.io/DiffSegR/articles/multi_loci.html)
+vignette.
 
 ## References
 
 Liehrmann, A., Delannoy, E., Castandet, B. and Rigaill, G. DiffSegR: an
 RNA-Seq data driven method for differential expression analysis using
-changepoint detection (2023).
-[doi:10.1101/2023.06.05.543691](https://doi.org/10.1101/2023.06.05.543691).
+changepoint detection (2023)
+[doi:10.1093/nargab/lqad098](https://doi.org/10.1093/nargab/lqad098).
 
 Maidstone R, Hocking T, Rigaill G, Fearnhead P. On optimal multiple
-changepoint algorithms for large data. Stat Comput 27(2), 519-533
-(2017).
+changepoint algorithms for large data. Stat Comput 27(2), 519-533 (2017)
 [doi:10.1007/s11222-016-9636-3](https://link.springer.com/article/10.1007/s11222-016-9636-3).
 
 Love, M.I., Huber, W. & Anders, S. Moderated estimation of fold change
-and dispersion for RNA-seq data with DESeq2. Genome Biol 15, 550 (2014).
+and dispersion for RNA-seq data with DESeq2. Genome Biol 15, 550 (2014)
 [doi:10.1186/s13059-014-0550-8](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8).

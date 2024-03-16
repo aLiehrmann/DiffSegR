@@ -1,4 +1,4 @@
-#' Differential expression analysis (DEA)
+#' Differential Expression Analysis (DEA)
 #'
 #' @description 
 #' `dea` takes as input the recently built `SummarizedExperiment` object and calls 
@@ -7,13 +7,12 @@
 #' all the resulting p-values or only a subset of interest. In the first case 
 #' a Benjamini–Hochberg procedure is used to control the False Discovery Rate 
 #' (FDR). In the second case, the user specifies selection criteria for the 
-#' regions, e.g. a threshold on the absolute log2-FC per-regions. Then, a 
+#' regions, e.g. a threshold on the absolute Log2-FC per-regions. Then, a 
 #' post-hoc procedure is used to control the joint Family wise error Rate 
 #' (jFWER) on the selected subset of regions.
 #' 
-#' @param data The `List` object returned by [DiffSegR::loadData()]. 
 #' @param SExp The `SummarizedExperiment` object returned by 
-#' [DiffSegR::segmentation()].
+#' [DiffSegR::counting()].
 #' @param design A `formula` object or a `Matrix` object. Passed on to 
 #' [DESeq2::DESeqDataSet].
 #' @param sizeFactors A vector of `Double`. Sample-specific size factors.
@@ -23,85 +22,15 @@
 #' predicate. The criteria used in the predicate have to be defined for each
 #' regions in mcols(SExp).
 #' @param postHoc_significanceLevel  A `Double`. The significance level of the 
-#' test procedure (see [sanssouci::posthocBySimes]).
+#' test procedure (See [sanssouci::posthocBySimes]).
 #' @param postHoc_tdpLowerBound A `Double`. The minimum true positive 
 #' proportion on the returned set of rejected regions.
-#' @param orderBy A `String`. The parameter on which regions are sorted before 
-#' the post-hoc procedure. 
-#' @param verbose A `Boolean`. Should all the operations performed be displayed
-#' (only post-hoc) ?
-#' @param dichotomicSearch A `Boolean`. Use it to speed up the post-hoc procedure.
-#' @return A`DESeqDataSet` object. 
-#' 
-#' @examples
-#' 
-#' # Create a working directory for running the example.
-#' working_directory <- "./DIFFSEGR_TEST"
-#' dir.create(working_directory)
-#' 
-#' # Save sample information in a text file.
-#' sample_info <- data.frame(
-#'   sample    = c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"),
-#'   condition = rep(c("pnp1_1", "wt"), each = 2),
-#'   replicate = rep(1:2,2),
-#'   bam       = sapply(
-#'     c("pnp1_1_1_ChrC_71950_78500.bam", 
-#'       "pnp1_1_2_ChrC_71950_78500.bam",
-#'       "wt_1_ChrC_71950_78500.bam",
-#'       "wt_2_ChrC_71950_78500.bam"
-#'      ),
-#'      function(bam) system.file("extdata", bam, package = "DiffSegR")
-#'   ),
-#'   coverage  = file.path(
-#'     working_directory,
-#'     paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
-#'   )
-#' )
-#' write.table(
-#'   sample_info, 
-#'   file.path(working_directory, "sample_info.txt")
-#' )
-#' 
-#' # Build coverages and log2-FC per-base.
-#' data <- loadData(
-#'   sampleInfo         = file.path(working_directory,"sample_info.txt"),
-#'   locus        = list(
-#'     seqid      = "ChrC", 
-#'     chromStart = 71950, 
-#'     chromEnd   = 78500
-#'   ),
-#'   referenceCondition = "wt",
-#'   stranded           = TRUE,
-#'   fromBam            = TRUE,
-#'   nbThreads          = 1
-#' )
-#' 
-#' # Summarize the differential landscape.
-#' SExp <- segmentation(
-#'   data                   = data, 
-#'   nbThreadsFeatureCounts = 1,
-#'   outputDirectory        = working_directory
-#' )
-#' 
-#' # Differential expression analysis. We control all the resulting 
-#' # p-values using a Benjamini–Hochberg procedure at level 0.01.
-#' dds <- dea(
-#'   data              = data,
-#'   SExp              = SExp,
-#'   design            = ~ condition,
-#'   sizeFactors       = rep(1,4),
-#'   significanceLevel = 1e-2
-#' )
-#' 
-#' # first to fifth regions 
-#' print(SummarizedExperiment::mcols(dds)[1:5,])
-#' 
-#' # delete working directory 
-#' unlink(working_directory, recursive = TRUE)
+#' @param verbose A `Logical`. Should all the operations performed be displayed ?
+#' @return A`DESeqDataSet` object augmented with the metadata column `DER`.
+#' `DER` is set to `TRUE` if the region is called differentially expressed. 
 #' 
 #' @export
 dea <- function(
-  data,
   SExp,
   design                    = ~ condition,
   sizeFactors               = NA,
@@ -109,11 +38,11 @@ dea <- function(
   predicate                 = NULL,
   postHoc_significanceLevel = 0.05,
   postHoc_tdpLowerBound     = 0.95,
-  orderBy                   = "pvalue",
-  verbose                   = FALSE,
-  dichotomicSearch          = FALSE) {
- 
-  message("  > differential expression analysis ...")
+  verbose                   = TRUE) {
+
+  ## differential expression analysis with DESEQ2 
+  ## (See https://bioconductor.org/packages/release/bioc/html/DESeq2.html) 
+  if (verbose) message("\n > differential expression analysis ...")
   dds <- DESeq2::DESeqDataSet(
     se     = SExp, 
     design = design
@@ -125,39 +54,82 @@ dea <- function(
   }
   dds <- DESeq2::estimateDispersions(dds)
   dds <- DESeq2::nbinomWaldTest(dds)
-  message("  >  multiple testing correction ...")
+  if (verbose) message("\n > multiple testing correction ...")
   GenomicRanges::mcols(dds) <- cbind(
     GenomicRanges::mcols(dds),
     DESeq2::results(dds)
   )
-  message("  >  normalize denoised log2-FC and coverage ...")
-  dds <- denoise(
-    dds  = dds,
-    data = data
-  )
-  if (is.null(predicate)){
-    GenomicRanges::mcols(dds)$rejectedHypotheses <- ifelse(
+  
+  if (is.null(predicate)) {## user-defined predicate for posthoc ?
+    
+    ## this columns was previously name `rejectedHypotheses`, now `DER`
+    GenomicRanges::mcols(dds)$DER <- ifelse(
       GenomicRanges::mcols(dds)$padj<significanceLevel,
       TRUE,
       FALSE
     )
     if (any(is.na(GenomicRanges::mcols(dds)$padj))) {
+      
+      ## in case of NA values, DER=FALSE
       GenomicRanges::mcols(dds[
         is.na(GenomicRanges::mcols(dds)$padj),
-      ])$rejectedHypotheses <- FALSE 
+      ])$DER <- FALSE 
     }
   } else {
-    message("  >  postHoc selection ...")
+    
+    if (verbose) message("\n > postHoc selection ...")
     dds <- postHocTest(
       SExp             = dds, 
       predicate        = predicate,
       alpha            = postHoc_significanceLevel,
       tdpLowerBound    = postHoc_tdpLowerBound,
-      orderBy          = orderBy,
-      verbose          = verbose,
-      dichotomicSearch = dichotomicSearch
+      verbose          = verbose
     )
   }
+  
   dds <- mergeFeatures(dds)
   dds
+}
+
+
+mergeFeatures <- function(SExp) {
+  
+  ## assumption: GRanges always sorted
+  features   <- as.data.frame(SummarizedExperiment::rowRanges(SExp))
+  group      <- rep(NA, length(SExp))
+  group[[1]] <- 0
+  
+  for (i in 2:nrow(features)) {
+    new_group     <- newGroupRule(
+      featureA = features[i-1,], 
+      featureB = features[i,]
+    )
+    group[[i]] <- ifelse(new_group, group[[i-1]]+1, group[[i-1]])
+    ## cleaner option to try:
+    ## group[[i]] <- new_group; group <- cumsum(group)
+  }
+  
+  SummarizedExperiment::mcols(SExp)$group <- group
+  SExp
+}
+
+
+newGroupRule <- function(featureA, featureB) {
+
+  if (featureA$seqnames != featureB$seqnames) {
+    TRUE
+  } else if (featureA$strand != featureB$strand) {
+    TRUE
+  } else if (featureA$end+1 != featureB$start) {
+    TRUE
+  } else if (featureA$DER != featureB$DER) {
+    TRUE
+  } else if (
+    featureB$DER & 
+    sign(featureA$log2FoldChange) != 
+    sign(featureB$log2FoldChange)) {
+    TRUE
+  } else {
+    FALSE
+  }
 }

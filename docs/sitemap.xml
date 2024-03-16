@@ -16,6 +16,9 @@
     <loc>/articles/introductory_tutorial.html</loc>
   </url>
   <url>
+    <loc>/articles/multi_loci.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -29,6 +32,12 @@
   </url>
   <url>
     <loc>/reference/annotateNearest.html</loc>
+  </url>
+  <url>
+    <loc>/reference/counting.html</loc>
+  </url>
+  <url>
+    <loc>/reference/coverage.html</loc>
   </url>
   <url>
     <loc>/reference/dea.html</loc>
@@ -49,9 +58,18 @@
     <loc>/reference/loadData.html</loc>
   </url>
   <url>
+    <loc>/reference/newExperiment.html</loc>
+  </url>
+  <url>
     <loc>/reference/postHocTest.html</loc>
   </url>
   <url>
     <loc>/reference/segmentation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/segmentationLFC.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setPaths.html</loc>
   </url>
 </urlset>

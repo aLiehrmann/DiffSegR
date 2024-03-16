@@ -1,0 +1,44 @@
+---
+title: "Multi-loci analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Multi-loci analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Before using this tutorial, we recommend that you read through our [introductory tutorial](introductory_tutorial.html).
+
+DiffSegR can analyze multiple loci of interest, including across various 
+chromosomes. To do so you can add one line per locus to the ``data.frame`` accepted as 
+input by `newExperiment()` (see hereafter). Alternatively, the function also accepts a 
+path to a tabular format file with similar columns (`seqid`, `chromStart`, 
+`chromEnd`, `locusID`). The rest of the analysis can be conducted similarly to 
+the analysis of a single locus.
+
+```{r, eval = FALSE}
+data <- newExperiment(
+  sampleInfo   = sample_info,
+  loci         = data.frame(
+    seqid      = c("ChrC", "Chr1"), 
+    chromStart = c(71950, 2421089), 
+    chromEnd   = c(78500, 2422066),
+    locusID    = c("psbB_petD", "F24B9")
+  ),
+  referenceCondition = "wt",
+  otherCondition     = "pnp1_1",
+  nbThreads          = 4,
+  nbThreadsByLocus   = 2
+)
+```
+
+Note : Here, the total number of threads used for the analysis is 4, with 2 
+allocated per locus. Since the analysis involves two loci, at the appropriate 
+time, both will be loaded into memory and processed simultaneously.

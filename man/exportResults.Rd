@@ -2,124 +2,47 @@
 % Please edit documentation in R/exportResults.r
 \name{exportResults}
 \alias{exportResults}
-\title{Export DiffSegR results}
+\title{Export DiffSegR Results}
 \usage{
 exportResults(
   data,
-  dds,
+  features,
+  sizeFactors,
   outputDirectory,
   genome,
   annotations = NA,
   igvVersion = "8",
-  select = c()
+  select = c(),
+  verbose = TRUE
 )
 }
 \arguments{
-\item{data}{The \code{List} object returned by \code{\link[=loadData]{loadData()}}}
+\item{data}{The \code{List} object returned by \code{\link[=newExperiment]{newExperiment()}}.}
 
-\item{dds}{The \code{DESeqDataSet} object returned by \code{\link[=dea]{dea()}}.}
+\item{features}{The \code{GRanges} part of the object returned by
+\code{\link[=dea]{dea()}}.}
 
-\item{outputDirectory}{A \code{String}. Absolute path to the output directory.}
+\item{sizeFactors}{A \code{numeric}vector of normalization factors for samples.`}
 
-\item{genome}{A \code{String}. Absolute path to the genome on which reads have
+\item{outputDirectory}{A \code{String}. Path to the output directory. One directory
+by locus will be create within outputDirectory.}
+
+\item{genome}{A \code{String}. Path to the genome on which reads have
 been aligned.}
 
-\item{annotations}{A \code{String}. Absolute path to the annotation file.}
+\item{annotations}{A \code{String}. Path to the annotation file.}
 
-\item{igvVersion}{A \code{String}. What IGV version should be used in the xml
+\item{igvVersion}{A \code{String}. What IGV version should be used in the XML
 file.}
 
 \item{select}{A vector of \code{String}. Additional information that appear for
-each region in IGV. only columns from mcols(dds) matching these names are
+each region in IGV. only columns from features matching these names are
 kept.}
 }
 \description{
-\code{exportResults()} saves for both strands DERs, not-DERs, segmentation,
-coverage profiles and log2-FC per-base in formats readable (bedGraph,gff3)
+For each locus, \code{exportResults()} saves DERs, not-DERs, segmentation,
+coverage profiles and Log2-FC per-base in formats readable (bedGraph,GFF3)
 by genome viewers like the Integrative Genome Viewer (IGV). For IGV, export
-also creates an IGV sessiong in xml format that allows loading all tracks in
-one click.
-}
-\examples{
-# Create a working directory for running the example.
-working_directory <- "./DIFFSEGR_TEST"
-dir.create(working_directory)
-
-# Save sample information in a text file.
-sample_info <- data.frame(
-  sample    = c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"),
-  condition = rep(c("pnp1_1", "wt"), each = 2),
-  replicate = rep(1:2,2),
-  bam       = sapply(
-    c("pnp1_1_1_ChrC_71950_78500.bam", 
-      "pnp1_1_2_ChrC_71950_78500.bam",
-      "wt_1_ChrC_71950_78500.bam",
-      "wt_2_ChrC_71950_78500.bam"
-     ),
-     function(bam) system.file("extdata", bam, package = "DiffSegR")
-  ),
-  coverage  = file.path(
-    working_directory,
-    paste0(c("pnp1_1_1", "pnp1_1_2", "wt_1", "wt_2"), ".rds")
-  )
-)
-write.table(
-  sample_info, 
-  file.path(working_directory, "sample_info.txt")
-)
-
-# Build coverages and log2-FC per-base.
-data <- loadData(
-  sampleInfo   = file.path(working_directory,"sample_info.txt"),
-  locus        = list(
-    seqid      = "ChrC", 
-    chromStart = 71950, 
-    chromEnd   = 78500
-  ),
-  referenceCondition = "wt",
-  stranded           = TRUE,
-  fromBam            = TRUE,
-  nbThreads          = 1
-)
-
-# Summarize the differential landscape.
-SExp <- segmentation(
-  data                   = data, 
-  nbThreadsFeatureCounts = 1,
-  outputDirectory        = working_directory
-)
-
-# Differential expression analysis. We control all the resulting 
-# p-values using a Benjamini–Hochberg procedure at level 0.01.
-dds <- dea(
-  data              = data,
-  SExp              = SExp,
-  design            = ~ condition,
-  sizeFactors       = rep(1,4),
-  significanceLevel = 1e-2
-)
-
-# Visualizing the DERs.
-exons_path <- system.file(
-  "extdata", 
-  "TAIR10_ChrC_exon.gff3", 
-  package = "DiffSegR"
-)
-ChrC_path  <- system.file(
-  "extdata", 
-  "TAIR10_ChrC.fa", 
-  package = "DiffSegR"
-)
-exportResults(
-  data            = data,
-  dds             = dds, 
-  outputDirectory = working_directory,
-  genome          = ChrC_path,
-  annotations     = exons_path,
-  select          = c("log2FoldChange", "pvalue", "padj")
-) 
-
-# delete working directory 
-unlink(working_directory, recursive = TRUE)
-
+also creates an IGV sessiong in XML that allows loading all tracks in
+one click. exportResults() can operate on each locus in parallel.
 }

@@ -4,7 +4,7 @@ template:
 navbar:
   bg: dark
   structure:
-    left: [tutorial, advanced, reference, news] 
+    left: [tutorial, advanced, multiloci, reference, news] 
     right: [github]
   components:
     tutorial:
@@ -13,6 +13,9 @@ navbar:
     advanced:
       text: Advanced tutorials
       href: articles/advanced_uses.html
+    multiloci:
+      text: Multi-loci analysis
+      href: articles/multi_loci.html
     reference:
       text: Reference
       href: reference/index.html
