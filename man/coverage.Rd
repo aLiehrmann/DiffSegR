@@ -7,7 +7,6 @@
 coverage(
   data,
   subsettingBams = FALSE,
-  tmpDirectory = NULL,
   coverageType = "average",
   verbose = TRUE,
   featureCountsOtherParams = list()
@@ -19,9 +18,6 @@ coverage(
 \item{subsettingBams}{A \code{Logical}. Determines whether the BAM files should
 be subset by the loci specified by the user. This can significantly improve
 computation time.}
-
-\item{tmpDirectory}{A \code{String}. Specifies the path to the directory where
-temporary subset BAM files will be saved. These files are automatically removed afterward.}
 
 \item{coverageType}{A \code{String}. Select how to compute the coverage profiles:
 \itemize{

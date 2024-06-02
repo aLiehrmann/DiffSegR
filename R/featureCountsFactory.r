@@ -11,6 +11,7 @@ featureCountsFactory <- function(type) {
 
 
 featureCountsFactory.fromBam <- function(
+  coverageDir,
   loci,
   sampleInfo,
   features,
@@ -53,6 +54,7 @@ featureCountsFactory.fromBam <- function(
 
 
 featureCountsFactory.fromCoverage <- function(
+  coverageDir,
   loci,
   sampleInfo,
   features,
@@ -74,12 +76,16 @@ featureCountsFactory.fromCoverage <- function(
     
     target_features <- features[features$parentLocus == current_locus$locusID,]  
 
-    path_to_coverages <- sub(
-      ".rds", 
-      paste0("_", current_locus$locusID, ".rds"),
-      sampleInfo$coverage
+    path_to_coverages <- file.path(
+      coverageDir,
+      paste0(
+        current_locus$locusID, 
+        "_", 
+        sampleInfo$sample, 
+        ".rds"
+      )
     )
-
+    
     coverage_by_sample <- loadRDS(pathToCoverages = path_to_coverages)
 
     coverage_by_strand <- formatCoverageList(

@@ -98,10 +98,14 @@ segmentationLFC <- function(
       )
     }
 
-    path_to_coverages <- sub(
-      ".rds", 
-      paste0("_", current_locus$locusID, ".rds"),
-      target_samples$coverage
+    path_to_coverages <- file.path(
+      data$coverageDir,
+      paste0(
+        current_locus$locusID, 
+        "_", 
+        target_samples$sample, 
+        ".rds"
+      )
     )
     
     coverage_by_sample <- loadRDS(pathToCoverages = path_to_coverages)

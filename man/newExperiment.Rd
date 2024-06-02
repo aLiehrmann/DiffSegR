@@ -9,6 +9,7 @@ newExperiment(
   referenceCondition,
   otherCondition,
   loci,
+  coverage,
   nbThreads = 1,
   nbThreadsByLocus = 1
 )
@@ -44,6 +45,9 @@ in the bam) for the target genomic region ;
 \item chromEnd   : end position for the target genomic region ;
 \item locusID    : unique id for the target genomic region.
 } Alternatively, one may provide a \code{Data.frame} that contains the same columns.}
+
+\item{coverage}{A \code{String}. Path to the directory where the
+coverage files will be saved.}
 
 \item{nbThreads}{An \code{Integer}. The overall number of threads used for the
 analysis.}

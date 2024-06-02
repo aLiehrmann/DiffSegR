@@ -43,6 +43,7 @@ counting <- function(
   start_time     <- Sys.time()
 
   feature_counts <- featureCounts(
+    coverageDir              = data$coverageDir,
     loci                     = data$loci,
     sampleInfo               = target_samples,
     features                 = features,

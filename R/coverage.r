@@ -8,8 +8,6 @@
 #' @param subsettingBams A `Logical`. Determines whether the BAM files should 
 #' be subset by the loci specified by the user. This can significantly improve 
 #' computation time.
-#' @param tmpDirectory A `String`. Specifies the path to the directory where 
-#' temporary subset BAM files will be saved. These files are automatically removed afterward.
 #' @param coverageType A `String`. Select how to compute the coverage profiles:
 #' \itemize{
 #'   \item fivePrime  : coverage profiles compute on 5' ends of reads ; 
@@ -26,22 +24,10 @@
 coverage <- function(
   data,
   subsettingBams = FALSE,
-  tmpDirectory   = NULL,
   coverageType   = "average",
   verbose        = TRUE, 
   featureCountsOtherParams = list()) {
   
-  if (subsettingBams) {
-    if (is.null(tmpDirectory)) {
-      stop("Please provide a valid directory path. This directory is essential 
-      for storing temporary files generated during the calculation of coverages.")
-    } else if (!dir.exists(tmpDirectory)) {
-      stop("The provided directory path does not exist. Please provide a valid 
-      directory path. This directory is essential for storing temporary files 
-      generated during the calculation of coverages.")
-    }
-  }
-
   ## choose coverage heuristic
   coverage_fn <- coverageFactory(type=coverageType)
 
@@ -79,15 +65,18 @@ coverage <- function(
       isPairedEnd     = data$sampleInfo$isPairedEnd,
       nbThreads       = data$nbThreadsByLocus,
       subsettingBams  = subsettingBams,
-      tmpDirectory    = tmpDirectory,
+      tmpDirectory    = data$coverageDir,
       featureCountsOtherParams = featureCountsOtherParams
     )
 
-    ## Update manually the path to coverage files (one by locus).
-    path_to_cov <- sub(
-      x           = data$sampleInfo$coverage, 
-      pattern     = ".rds$", 
-      replacement = paste0("_", current_locus$locusID, ".rds")
+    path_to_cov <- file.path(
+      data$coverageDir,
+      paste0(
+        current_locus$locusID, 
+        "_", 
+        data$sampleInfo$sample, 
+        ".rds"
+      )
     )
 
     ## save coverages

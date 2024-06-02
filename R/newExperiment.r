@@ -32,6 +32,8 @@
 #'   \item chromEnd   : end position for the target genomic region ; 
 #'   \item locusID    : unique id for the target genomic region.
 #' } Alternatively, one may provide a `Data.frame` that contains the same columns.
+#' @param coverage A `String`. Path to the directory where the 
+#' coverage files will be saved.
 #' @param nbThreads An `Integer`. The overall number of threads used for the 
 #' analysis.
 #' @param nbThreadsByLocus An `Integer`. The number of threads dedicated to each
@@ -45,8 +47,14 @@ newExperiment <- function(
   referenceCondition,
   otherCondition,
   loci,
+  coverage,
   nbThreads        = 1,
   nbThreadsByLocus = 1) {
+  
+  if (!dir.exists(coverage)) {
+    stop("The provided directory path does not exist. Please provide a valid 
+    directory path. This directory is essential for storing coverage files.")
+  }
 
   if (nbThreads < nbThreadsByLocus) {
     stop("The total number of threads specified (nbThreads) is lower than the number 
@@ -71,16 +79,7 @@ newExperiment <- function(
       any biological condition of the file with information on samples."))
   }
 
-  if (length(table(sampleInfo$stranded[sampleInfo$condition %in% 
-    c(referenceCondition, otherCondition)]))>1) {
-    stop(paste0(
-      "Inconsistency detected in BAM file orientation from the ", referenceCondition,
-      " and ", otherCondition, " conditions. All BAM files must be either 
-      all stranded or all unstranded."
-    ))
-  }
-
-  ## 1:stranded, 2:reversly stranded, 0: unstranded
+  ## 1:stranded, 2:reversely stranded, 0: unstranded
   stranded <- sampleInfo$strandSpecific %in% c(1,2) 
   if (!(all(stranded) | all(!stranded))) {
     stop("BAMs should be either all (reversely) stranded or all unstranded, 
@@ -126,6 +125,7 @@ newExperiment <- function(
     loci               = loci,
     nbThreads          = nbThreads,
     nbThreadsByLocus   = nbThreadsByLocus,
-    stranded           = stranded
+    stranded           = stranded,
+    coverageDir        = coverage
   )
 }

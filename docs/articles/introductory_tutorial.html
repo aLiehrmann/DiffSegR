@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Tutorial : Transcriptome-Wide Differential Expression Analysis with DiffSegR">
 <meta property="og:description" content="DiffSegR">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -29,7 +29,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark" data-bs-theme="dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">DiffSegR</a>
 
@@ -119,7 +119,6 @@
 <li>condition : identifier for the condition ;</li>
 <li>replicate : identifier for the replicate ;</li>
 <li>bam : path to the bam file (.bam) ;</li>
-<li>coverage : path to the coverage file (.rds) ;</li>
 <li>isPairedEnd : logical indicating if the library contain paired-end reads or not (TRUE/FALSE) ;</li>
 <li>strandSpecific : integer indicating if a strand-specific analysis should be performed. 0 (unstranded), 1 (stranded) and 2 (reversely stranded). WARNING: All samples must be consistently stranded or non-stranded. Ensure uniformity across your dataset to avoid analysis errors.</li>
 </ol>
@@ -138,32 +137,26 @@
 <span>    <span class="op">)</span>,</span>
 <span>    <span class="kw">function</span><span class="op">(</span><span class="va">bam</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="va">bam</span>, package <span class="op">=</span> <span class="st">"DiffSegR"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  coverage  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
-<span>    <span class="va">working_directory</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pnp1_1_1"</span>, <span class="st">"pnp1_1_2"</span>, <span class="st">"wt_1"</span>, <span class="st">"wt_2"</span><span class="op">)</span>, <span class="st">".rds"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span>,</span>
 <span>  isPairedEnd    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">4</span><span class="op">)</span>,</span>
 <span>  strandSpecific <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#- display sample information table -------------------------------------------#</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">sample_info</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <colgroup>
-<col width="5%">
-<col width="5%">
-<col width="5%">
-<col width="50%">
-<col width="16%">
 <col width="6%">
+<col width="6%">
+<col width="6%">
+<col width="60%">
 <col width="8%">
+<col width="10%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">sample</th>
 <th align="left">condition</th>
 <th align="right">replicate</th>
 <th align="left">bam</th>
-<th align="left">coverage</th>
 <th align="left">isPairedEnd</th>
 <th align="right">strandSpecific</th>
 </tr></thead>
@@ -172,8 +165,7 @@
 <td align="left">pnp1_1_1</td>
 <td align="left">pnp1_1</td>
 <td align="right">1</td>
-<td align="left">/tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</td>
-<td align="left">./DIFFSEGR_TEST/pnp1_1_1.rds</td>
+<td align="left">/tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</td>
 <td align="left">FALSE</td>
 <td align="right">1</td>
 </tr>
@@ -181,8 +173,7 @@
 <td align="left">pnp1_1_2</td>
 <td align="left">pnp1_1</td>
 <td align="right">2</td>
-<td align="left">/tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</td>
-<td align="left">./DIFFSEGR_TEST/pnp1_1_2.rds</td>
+<td align="left">/tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</td>
 <td align="left">FALSE</td>
 <td align="right">1</td>
 </tr>
@@ -190,8 +181,7 @@
 <td align="left">wt_1</td>
 <td align="left">wt</td>
 <td align="right">1</td>
-<td align="left">/tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</td>
-<td align="left">./DIFFSEGR_TEST/wt_1.rds</td>
+<td align="left">/tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</td>
 <td align="left">FALSE</td>
 <td align="right">1</td>
 </tr>
@@ -199,8 +189,7 @@
 <td align="left">wt_2</td>
 <td align="left">wt</td>
 <td align="right">2</td>
-<td align="left">/tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</td>
-<td align="left">./DIFFSEGR_TEST/wt_2.rds</td>
+<td align="left">/tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</td>
 <td align="left">FALSE</td>
 <td align="right">1</td>
 </tr>
@@ -231,7 +220,8 @@
 <span>  referenceCondition <span class="op">=</span> <span class="st">"wt"</span>,</span>
 <span>  otherCondition     <span class="op">=</span> <span class="st">"pnp1_1"</span>,</span>
 <span>  nbThreads          <span class="op">=</span> <span class="va">nb_threads_tot</span>,</span>
-<span>  nbThreadsByLocus   <span class="op">=</span> <span class="va">nb_threads_locus</span></span>
+<span>  nbThreadsByLocus   <span class="op">=</span> <span class="va">nb_threads_locus</span>,</span>
+<span>  coverage           <span class="op">=</span> <span class="va">working_directory</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
@@ -241,21 +231,16 @@
 <span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam pnp1_1_2    pnp1_1         2</span></span>
 <span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam         wt_1        wt         1</span></span>
 <span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam         wt_2        wt         2</span></span>
-<span><span class="co">#&gt;                                                                                                                   bam</span></span>
-<span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam /tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</span></span>
-<span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam /tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</span></span>
-<span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam         /tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</span></span>
-<span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam         /tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</span></span>
-<span><span class="co">#&gt;                                                   coverage isPairedEnd</span></span>
-<span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam ./DIFFSEGR_TEST/pnp1_1_1.rds       FALSE</span></span>
-<span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam ./DIFFSEGR_TEST/pnp1_1_2.rds       FALSE</span></span>
-<span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam         ./DIFFSEGR_TEST/wt_1.rds       FALSE</span></span>
-<span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam         ./DIFFSEGR_TEST/wt_2.rds       FALSE</span></span>
-<span><span class="co">#&gt;                               strandSpecific</span></span>
-<span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam              1</span></span>
-<span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam              1</span></span>
-<span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam                  1</span></span>
-<span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam                  1</span></span>
+<span><span class="co">#&gt;                                                                                                                  bam</span></span>
+<span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam /tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/pnp1_1_1_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam /tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/pnp1_1_2_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam         /tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/wt_1_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam         /tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/wt_2_ChrC_71950_78500.bam</span></span>
+<span><span class="co">#&gt;                               isPairedEnd strandSpecific</span></span>
+<span><span class="co">#&gt; pnp1_1_1_ChrC_71950_78500.bam       FALSE              1</span></span>
+<span><span class="co">#&gt; pnp1_1_2_ChrC_71950_78500.bam       FALSE              1</span></span>
+<span><span class="co">#&gt; wt_1_ChrC_71950_78500.bam           FALSE              1</span></span>
+<span><span class="co">#&gt; wt_2_ChrC_71950_78500.bam           FALSE              1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $referenceCondition</span></span>
 <span><span class="co">#&gt; [1] "wt"</span></span>
@@ -278,7 +263,10 @@
 <span><span class="co">#&gt; [1] 4</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $stranded</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $coverageDir</span></span>
+<span><span class="co">#&gt; [1] "./DIFFSEGR_TEST"</span></span></code></pre></div>
 <p><code><a href="../reference/coverage.html">coverage()</a></code> generates coverage profiles from BAM files for the locus of interest. When reads are stranded (<code>stranded = TRUE</code>), it creates a separate coverage profile for each strand across replicates of the biological conditions being compared. By default, coverage is calculated using a geometric mean of the 5’ and 3’ ends of aligned reads (<code>coverageType = "average"</code>). If the coverage is too sparse, one may calculate the coverage based on the entire read by using the argument <code>coverageType = "fullLength"</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/coverage.html">coverage</a></span><span class="op">(</span></span>
@@ -294,7 +282,7 @@
 <span><span class="co">#&gt;             ====      \___ \| |  | |  _ &lt;|  _  /|  __|   / /\ \ | |  | |</span></span>
 <span><span class="co">#&gt;               ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |</span></span>
 <span><span class="co">#&gt;         ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/</span></span>
-<span><span class="co">#&gt;        Rsubread 2.16.1</span></span>
+<span><span class="co">#&gt;        Rsubread 2.18.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //========================== featureCounts setting ===========================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
@@ -320,7 +308,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //================================= Running ==================================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid28395 ...         ||</span></span>
+<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid11345 ...         ||</span></span>
 <span><span class="co">#&gt; ||    Features : 13102                                                        ||</span></span>
 <span><span class="co">#&gt; ||    Meta-features : 13102                                                   ||</span></span>
 <span><span class="co">#&gt; ||    Chromosomes/contigs : 1                                                 ||</span></span>
@@ -365,7 +353,7 @@
 <span><span class="co">#&gt;             ====      \___ \| |  | |  _ &lt;|  _  /|  __|   / /\ \ | |  | |</span></span>
 <span><span class="co">#&gt;               ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |</span></span>
 <span><span class="co">#&gt;         ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/</span></span>
-<span><span class="co">#&gt;        Rsubread 2.16.1</span></span>
+<span><span class="co">#&gt;        Rsubread 2.18.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //========================== featureCounts setting ===========================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
@@ -391,7 +379,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //================================= Running ==================================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid28395 ...         ||</span></span>
+<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid11345 ...         ||</span></span>
 <span><span class="co">#&gt; ||    Features : 13102                                                        ||</span></span>
 <span><span class="co">#&gt; ||    Meta-features : 13102                                                   ||</span></span>
 <span><span class="co">#&gt; ||    Chromosomes/contigs : 1                                                 ||</span></span>
@@ -429,14 +417,13 @@
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
 <span><span class="co">#&gt; \\============================================================================//</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  &gt; Finished in 2.79967212677002 secs</span></span></code></pre></div>
-<p>To enhance efficiency, users have the option to pre-process by subsetting BAM files to the locus of interest, which can notably reduce running times (refer to <code>subsettingBams</code> and <code>tmpDirectory</code> parameters in <code><a href="../reference/coverage.html">?DiffSegR::coverage</a></code>).</p>
+<span><span class="co">#&gt;  &gt; Finished in 1.25298714637756 secs</span></span></code></pre></div>
+<p>To enhance efficiency, users have the option to pre-process by subsetting BAM files to the locus of interest, which can notably reduce running times (refer to <code>subsettingBams</code> parameter in <code><a href="../reference/coverage.html">?DiffSegR::coverage</a></code>).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/coverage.html">coverage</a></span><span class="op">(</span></span>
 <span>  data           <span class="op">=</span> <span class="va">data</span>,</span>
 <span>  coverageType   <span class="op">=</span> <span class="st">"average"</span>,</span>
-<span>  subsettingBams <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tmpDirectory   <span class="op">=</span> <span class="va">path_to_tmp_directory</span> </span>
+<span>  subsettingBams <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -451,7 +438,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  &gt; Segmenting the log2-FC of locus ChrC 71950-78500 (ID : psbB_petD) ...</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  &gt; Finished in 0.0879976749420166 secs</span></span></code></pre></div>
+<span><span class="co">#&gt;  &gt; Finished in 0.33150053024292 secs</span></span></code></pre></div>
 <p><code><a href="../reference/counting.html">counting()</a></code> calls <code><a href="https://rdrr.io/pkg/Rsubread/man/featureCounts.html" class="external-link">Rsubread::featureCounts()</a></code> which assigns to the segments the mapped reads from each replicate of each biological condition. A read is allowed to be assigned to more than one feature if it is found to overlap with more than one feature. Upon completion, <code><a href="https://rdrr.io/pkg/Rsubread/man/featureCounts.html" class="external-link">Rsubread::featureCounts()</a></code> generates a count matrix. Finally, <code><a href="../reference/counting.html">counting()</a></code> returns the segments and associated count matrix as a <code>SummarizedExperiment</code> object.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SExp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/counting.html">counting</a></span><span class="op">(</span></span>
@@ -459,7 +446,7 @@
 <span>  features <span class="op">=</span> <span class="va">features</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  &gt; counting ...</span></span>
+<span><span class="co">#&gt;  &gt; Counting ...</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         ==========     _____ _    _ ____  _____  ______          _____  </span></span>
 <span><span class="co">#&gt;         =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \ </span></span>
@@ -467,7 +454,7 @@
 <span><span class="co">#&gt;             ====      \___ \| |  | |  _ &lt;|  _  /|  __|   / /\ \ | |  | |</span></span>
 <span><span class="co">#&gt;               ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |</span></span>
 <span><span class="co">#&gt;         ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/</span></span>
-<span><span class="co">#&gt;        Rsubread 2.16.1</span></span>
+<span><span class="co">#&gt;        Rsubread 2.18.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //========================== featureCounts setting ===========================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
@@ -492,7 +479,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; //================================= Running ==================================\\</span></span>
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
-<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid28395 ...         ||</span></span>
+<span><span class="co">#&gt; || Load annotation file .Rsubread_UserProvidedAnnotation_pid11345 ...         ||</span></span>
 <span><span class="co">#&gt; ||    Features : 69                                                           ||</span></span>
 <span><span class="co">#&gt; ||    Meta-features : 69                                                      ||</span></span>
 <span><span class="co">#&gt; ||    Chromosomes/contigs : 1                                                 ||</span></span>
@@ -530,7 +517,7 @@
 <span><span class="co">#&gt; ||                                                                            ||</span></span>
 <span><span class="co">#&gt; \\============================================================================//</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  &gt; finished in 0.252707958221436 secs</span></span></code></pre></div>
+<span><span class="co">#&gt;  &gt; Finished in 0.166458129882812 secs</span></span></code></pre></div>
 <p>Between positions <code>71950</code> and <code>78500</code> of chloroplast genome, <code><a href="../reference/segmentationLFC.html">segmentationLFC()</a></code> returns 17 segments on the forward (+) strand and 52 segments on the reverse (-) strand. Segment coordinates and associated counts can be retrieved using respectively <code>SummarizedExperiment::rowRanges</code> and <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment::assay</a></code> accessors.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#- number of segments found ---------------------------------------------------# </span></span>
@@ -538,8 +525,9 @@
 <span><span class="co">#&gt; factor-Rle of length 69 with 2 runs</span></span>
 <span><span class="co">#&gt;   Lengths: 17 52</span></span>
 <span><span class="co">#&gt;   Values :  +  -</span></span>
-<span><span class="co">#&gt; Levels(3): + - *</span></span>
-<span><span class="co">#- display first five segments ------------------------------------------------#</span></span>
+<span><span class="co">#&gt; Levels(3): + - *</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#- display first five segments ------------------------------------------------#</span></span>
 <span><span class="va">segment_coordinates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">SExp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">segment_coordinates</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">segment_coordinates</span><span class="op">)</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"seqnames"</span>,</span>
@@ -594,7 +582,7 @@
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#- display counts associated to first five segments ---------------------------#</span></span>
 <span><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">SExp</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">counts</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
@@ -650,7 +638,7 @@
 </h3>
 <p><code><a href="../reference/dea.html">dea()</a></code> function takes as input the recently built <code>SummarizedExperiment</code> object and calls <code>DESeq2</code> to test for each line, i.e. each segment, the difference in expression between the two compared biological conditions. Here we control all the resulting p-values using a Benjamini–Hochberg procedure at level <code>significanceLevel = 1e-2</code>.</p>
 <p>Note: By default sample-specific size factors are computed by <code>DESeq2</code>. They can be overwritten by the user. In this example, sample-specific size factors have the same weight <code>sizeFactors = rep(1,4)</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dea.html">dea</a></span><span class="op">(</span></span>
 <span>  SExp              <span class="op">=</span> <span class="va">SExp</span>,</span>
 <span>  design            <span class="op">=</span> <span class="op">~</span> <span class="va">condition</span>,</span>
@@ -666,12 +654,13 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  &gt; multiple testing correction ...</span></span></code></pre></div>
 <p>Regions differentially expressed (DERs) are set to <code>DER = TRUE</code>. On this example, <code><a href="../reference/dea.html">dea()</a></code> returns 39 DERs.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#- number of DERs -------------------------------------------------------------#</span></span>
 <span><span class="va">DERs</span> <span class="op">&lt;-</span> <span class="va">dds</span><span class="op">[</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu">mcols</span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">$</span><span class="va">DER</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DERs</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 39</span></span>
-<span><span class="co">#- display first five DERs by position ----------------------------------------#</span></span>
+<span><span class="co">#&gt; [1] 39</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#- display first five DERs by position ----------------------------------------#</span></span>
 <span><span class="va">DERs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">DERs</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">DERs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">DERs</span><span class="op">)</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"seqnames"</span>,</span>
@@ -745,7 +734,7 @@
 <h3 id="step-4-annotate-the-ders">Step 4: Annotate the DERs<a class="anchor" aria-label="anchor" href="#step-4-annotate-the-ders"></a>
 </h3>
 <p><code><a href="../reference/annotateNearest.html">annotateNearest()</a></code> relies on user specified annotations in GFF3 or GTF format to annotate the DERs found during the DEA. Seven classes of labels translate the relative positions of the DER and its closest annotation(s): antisense; upstream; downstream; inside; overlapping 3’; overlapping 5’; overlapping 5’, 3’.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exons_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
 <span> <span class="st">"extdata"</span>, </span>
 <span> <span class="st">"TAIR10_ChrC_exon.gff3"</span>, </span>
@@ -760,12 +749,13 @@
 <span>  outputDirectory <span class="op">=</span> <span class="va">working_directory</span>,</span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  &gt; loading annotations from /tmp/RtmpsJeQSs/temp_libpath53dc4e4b39d3/DiffSegR/extdata/TAIR10_ChrC_exon.gff3 ...</span></span>
+<span><span class="co">#&gt;  &gt; Loading annotations from /tmp/Rtmpmuyfvl/temp_libpath1d15a968813/DiffSegR/extdata/TAIR10_ChrC_exon.gff3 ...</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  &gt; annotate differential expressed regions ...</span></span>
+<span><span class="co">#&gt;  &gt; Annotate differential expressed regions ...</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  &gt; a report can be found in ./DIFFSEGR_TEST/annotated_DERs.txt</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">annotated_DERs</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;  &gt; A report can be found in ./DIFFSEGR_TEST/annotated_DERs.txt</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">annotated_DERs</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">seqnames</th>
@@ -1360,7 +1350,7 @@
 </ol>
 <p>Symmetrically, the rest of the tracks correspond to the same data on the reverse strand.</p>
 <p>Note :</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ChrC_path</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
 <span> <span class="st">"extdata"</span>, </span>
 <span> <span class="st">"TAIR10_ChrC.fa"</span>, </span>
@@ -1390,8 +1380,8 @@
 <span><span class="co">#&gt;     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,</span></span>
 <span><span class="co">#&gt;     get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,</span></span>
 <span><span class="co">#&gt;     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,</span></span>
-<span><span class="co">#&gt;     Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,</span></span>
-<span><span class="co">#&gt;     table, tapply, union, unique, unsplit, which.max, which.min</span></span>
+<span><span class="co">#&gt;     Position, rank, rbind, Reduce, rownames, sapply, setdiff, table,</span></span>
+<span><span class="co">#&gt;     tapply, union, unique, unsplit, which.max, which.min</span></span>
 <span><span class="co">#&gt; Loading required package: S4Vectors</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'S4Vectors'</span></span>
@@ -1416,7 +1406,7 @@ DiffSegR output between positions 76,990 to 78,248 on the chloroplast genome. Th
 </p>
 </div>
 <p>In collaboration projects, users will typically send the directory containing all tracks to collaborators. To load the session in IGV, the collaborator must update the paths for the genome and annotations in the XML file. This step may be necessary for each IGV session produced by a <a href="multi_loci.html">multi-loci analysis</a>. To streamline this process, collaborators can modify all necessary paths directly from their R environment using the <code><a href="../reference/setPaths.html">setPaths()</a></code> function.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/setPaths.html">setPaths</a></span><span class="op">(</span></span>
 <span>  directory <span class="op">=</span> <span class="st">"collaborator_igv_session(s)_directory"</span>,</span>
 <span>  genome    <span class="op">=</span> <span class="st">"collaborator_genome_path"</span>,</span>
@@ -1438,13 +1428,11 @@ DiffSegR output between positions 76,990 to 78,248 on the chloroplast genome. Th
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Arnaud Liehrmann, Étienne Delannoy, Benoît Castandet, Guillem Rigaill.</p>
+  <p>Developed by Arnaud Liehrmann, Étienne Delannoy, Benoît Castandet, Guillem Rigaill.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
     </footer>
