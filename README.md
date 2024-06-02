@@ -54,7 +54,7 @@ for an introduction to our framework on real data. See the [advanced
 tutorial](https://aliehrmann.github.io/DiffSegR/articles/advanced_uses.html)
 for examples of more advanced uses of `DiffSegR`. If you’re interested
 in analyzing multiple loci, including entire chromosomes, after reading
-the introduction, go take a look at our [Multi-loci
+the introduction, go take a look at our [multi-loci
 analysis](https://aliehrmann.github.io/DiffSegR/articles/multi_loci.html)
 vignette.
 
