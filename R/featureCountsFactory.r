@@ -110,6 +110,8 @@ featureCountsFactory.fromCoverage <- function(
           as.integer(sum(coverage_by_strand[[strand]][[sample]][start:end]))
         }
       )
-    })) 
+    }))
+    rownames(counts) <- features_df$featureId 
+    counts
   }, nbThreads = nbThreads %/% nbThreadsByLocus))
 }

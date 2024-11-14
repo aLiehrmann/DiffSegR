@@ -60,6 +60,7 @@ counting <- function(
   
   ## return SummarizedExperiment object
   colData <- as.data.frame(lapply(target_samples, as.factor))  
+  feature_counts <- feature_counts[features$featureId,] #force the same order
   SExp    <- SummarizedExperiment::SummarizedExperiment(
     assays    = feature_counts,
     rowRanges = features,
