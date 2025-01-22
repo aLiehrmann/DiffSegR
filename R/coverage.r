@@ -5,9 +5,6 @@
 #' using data from BAM files.
 #'
 #' @param data The `List` object returned by [DiffSegR::newExperiment()].
-#' @param subsettingBams A `Logical`. Determines whether the BAM files should 
-#' be subset by the loci specified by the user. This can significantly improve 
-#' computation time.
 #' @param coverageType A `String`. Select how to compute the coverage profiles:
 #' \itemize{
 #'   \item fivePrime  : coverage profiles compute on 5' ends of reads ; 
@@ -17,16 +14,12 @@
 #'   \item fullLength : coverage profiles compute on full length reads.
 #' }
 #' @param verbose A `Logical`. Should all the operations performed be displayed ?
-#' @param featureCountsOtherParams A `List`. Other paramters passed on to 
-#' [Rsubread::featureCounts()].
 #'
 #' @export 
 coverage <- function(
   data,
-  subsettingBams = FALSE,
   coverageType   = "average",
-  verbose        = TRUE, 
-  featureCountsOtherParams = list()) {
+  verbose        = TRUE) {
   
   ## choose coverage heuristic
   coverage_fn <- coverageFactory(type=coverageType)
@@ -59,14 +52,10 @@ coverage <- function(
 
     coverage_by_sample <- coverage_fn(
       locus           = current_locus,
-      stranded        = data$stranded,
       bams            = data$sampleInfo$bam,
       strandSpecific  = data$sampleInfo$strandSpecific,
       isPairedEnd     = data$sampleInfo$isPairedEnd,
-      nbThreads       = data$nbThreadsByLocus,
-      subsettingBams  = subsettingBams,
-      tmpDirectory    = data$coverageDir,
-      featureCountsOtherParams = featureCountsOtherParams
+      verbose         = verbose
     )
 
     path_to_cov <- file.path(

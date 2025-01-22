@@ -4,20 +4,10 @@
 \alias{coverage}
 \title{Calculate Coverage Profiles}
 \usage{
-coverage(
-  data,
-  subsettingBams = FALSE,
-  coverageType = "average",
-  verbose = TRUE,
-  featureCountsOtherParams = list()
-)
+coverage(data, coverageType = "average", verbose = TRUE)
 }
 \arguments{
 \item{data}{The \code{List} object returned by \code{\link[=newExperiment]{newExperiment()}}.}
-
-\item{subsettingBams}{A \code{Logical}. Determines whether the BAM files should
-be subset by the loci specified by the user. This can significantly improve
-computation time.}
 
 \item{coverageType}{A \code{String}. Select how to compute the coverage profiles:
 \itemize{
@@ -29,9 +19,6 @@ average of 5' & 3' ends of reads ;
 }}
 
 \item{verbose}{A \code{Logical}. Should all the operations performed be displayed ?}
-
-\item{featureCountsOtherParams}{A \code{List}. Other paramters passed on to
-\code{\link[Rsubread:featureCounts]{Rsubread::featureCounts()}}.}
 }
 \description{
 \code{coverage()} calculates the coverage profiles for loci specified by the user,

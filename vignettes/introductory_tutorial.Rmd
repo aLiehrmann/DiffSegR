@@ -136,7 +136,7 @@ data <- newExperiment(
 print(data)
 ```
 `coverage()` generates coverage profiles from BAM files for the locus
-of interest. When reads are stranded (``stranded = TRUE``), it creates a separate 
+of interest. When reads are stranded, it creates a separate 
 coverage profile for each strand across replicates of the biological conditions 
 being compared. By default, coverage is calculated using a geometric mean of the
 5’ and 3’ ends of aligned reads (``coverageType = "average"``). If the coverage 
@@ -147,18 +147,6 @@ is too sparse, one may calculate the coverage based on the entire read by using
 coverage(
   data         = data,
   coverageType = "average"
-)
-```
-
-To enhance efficiency, users have the option to pre-process by subsetting BAM
-files to the locus of interest, which can notably reduce running times (refer
-to ``subsettingBams`` parameter in `?DiffSegR::coverage`).
-
-```{r, eval=FALSE}
-coverage(
-  data           = data,
-  coverageType   = "average",
-  subsettingBams = TRUE
 )
 ```
 
