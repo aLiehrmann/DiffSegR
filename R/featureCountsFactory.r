@@ -95,23 +95,15 @@ featureCountsFactory.fromCoverage <- function(
 
     rm(coverage_by_sample)
 
-    features_df <- as.data.frame(target_features)
-
-    counts <- do.call(rbind, lapply(1:nrow(features_df), function(i_feature) {
-      start   <- features_df$modelStart[[i_feature]]
-      end     <- features_df$modelEnd[[i_feature]]
-      strand  <- d[[features_df$strand[i_feature]]]
-      samples <- names(coverage_by_strand[[strand]])
-    
-      ## sum reads overlapping i_feature in each sample
-      sapply(
-        samples,
-        function(sample){
-          as.integer(sum(coverage_by_strand[[strand]][[sample]][start:end]))
-        }
-      )
+    do.call(rbind, lapply(names(coverage_by_strand), function(s) {
+      cov_mat <- do.call(cbind,lapply(coverage_by_strand[[s]], as.integer))
+      feat    <- target_features[BiocGenerics::strand(target_features)==d[[s]],]
+      group   <- rep(feat$featureId, BiocGenerics::width(feat))
+      cnts    <- rowsum(cov_mat, group)
+      rm(cov_mat)
+      gc()
+      rownames(cnts) <- feat$featureId
+      cnts
     }))
-    rownames(counts) <- features_df$featureId 
-    counts
   }, nbThreads = nbThreads %/% nbThreadsByLocus))
 }
